@@ -863,10 +863,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\user_ext_module\ngx_http_hello_world.c"
-					>
-				</File>
-				<File
 					RelativePath=".\http\modules\ngx_http_index_module.c"
 					>
 				</File>
@@ -888,10 +884,6 @@
 				</File>
 				<File
 					RelativePath=".\http\modules\ngx_http_memcached_module.c"
-					>
-				</File>
-				<File
-					RelativePath=".\user_ext_module\ngx_http_mergedemo_module.c"
 					>
 				</File>
 				<File
@@ -960,6 +952,18 @@
 				</File>
 				<File
 					RelativePath=".\http\modules\ngx_http_uwsgi_module.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="ext_modules"
+				>
+				<File
+					RelativePath="..\ext-module\hello_world\ngx_http_hello_world.c"
+					>
+				</File>
+				<File
+					RelativePath="..\ext-module\merge_demo\ngx_http_mergedemo_module.c"
 					>
 				</File>
 			</Filter>
