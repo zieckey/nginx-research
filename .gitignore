@@ -12,8 +12,8 @@
 *.la
 *.a
 
-nginx/Debug/
-nginx/logs/
-nginx/nginx.ncb
-nginx/nginx.vcproj.CORP.weizili.user
-
+nginx-win32-src/Debug/
+nginx-win32-src/logs/
+nginx-win32-src/nginx.ncb
+nginx-win32-src/nginx.vcproj.CORP.weizili.user
+nginx-win32-src/nginx.suo
