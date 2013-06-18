@@ -17,8 +17,6 @@ extern ngx_module_t  ngx_http_core_module;
 extern ngx_module_t  ngx_http_log_module;
 extern ngx_module_t  ngx_http_upstream_module;
 //extern ngx_module_t  ngx_http_static_module;
-extern ngx_module_t  ngx_http_helloworld_module;
-extern ngx_module_t  ngx_http_mergedemo_module;
 extern ngx_module_t  ngx_http_autoindex_module;
 extern ngx_module_t  ngx_http_index_module;
 extern ngx_module_t  ngx_http_auth_basic_module;
@@ -53,6 +51,11 @@ extern ngx_module_t  ngx_http_copy_filter_module;
 extern ngx_module_t  ngx_http_range_body_filter_module;
 extern ngx_module_t  ngx_http_not_modified_filter_module;
 
+
+extern ngx_module_t  ngx_http_helloworld_module;
+extern ngx_module_t  ngx_http_mergedemo_module;
+extern ngx_module_t  ngx_http_dns_module;
+
 ngx_module_t *ngx_modules[] = {
     &ngx_core_module,
     &ngx_errlog_module,
@@ -69,6 +72,7 @@ ngx_module_t *ngx_modules[] = {
 //    &ngx_http_static_module,
     &ngx_http_helloworld_module,
     &ngx_http_mergedemo_module,
+    &ngx_http_dns_module,
     &ngx_http_autoindex_module,
     &ngx_http_index_module,
     &ngx_http_auth_basic_module,

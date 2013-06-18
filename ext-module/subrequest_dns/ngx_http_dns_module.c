@@ -5,12 +5,15 @@
 #define NGX_HTTP_DNS_WORKING   1
 #define NGX_HTTP_DNS_SUBURI    "/dns_back"
 #define NGX_HTTP_DNS_SUBARGS   "host=&ip="
+
 typedef struct {
     ngx_str_t                  subrequest;
 } ngx_http_dns_loc_conf_t;
+
 typedef struct {
     ngx_uint_t                 ret_count;
 } ngx_http_dns_ctx_t;
+
 static void *ngx_http_dns_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_dns_merge_loc_conf(ngx_conf_t *cf, void *parent,
     void *child);
@@ -165,8 +168,6 @@ ngx_http_dns_post_read_body_handler(ngx_http_request_t *r)
             state = NGX_HTTP_DNS_WORKING;
         }
         switch(*p) {
-            case CR:
-                break;
             case LF:
                 state = NGX_HTTP_DNS_STATRT;
                 break;
