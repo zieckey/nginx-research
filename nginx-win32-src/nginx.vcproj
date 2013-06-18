@@ -953,7 +953,7 @@
 				Name="ext_modules"
 				>
 				<File
-					RelativePath="..\ext-module\subrequest_dns\ngx_http_dns_module.c"
+					RelativePath="..\ext-module\dns_subrequest\ngx_http_dns_module.c"
 					>
 				</File>
 				<File
