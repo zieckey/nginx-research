@@ -211,7 +211,7 @@ ngx_http_dns_post_read_body_handler(ngx_http_request_t *r)
             tmpbuf = ngx_pcalloc(r->pool, 32);
             ngx_snprintf((u_char*)tmpbuf, 32, "==%d==", i);
             b->pos = (u_char *) tmpbuf;
-            b->last = b->pos + strlen(tmpbuf);
+            b->last = b->pos + ngx_strlen(tmpbuf);
             b->memory = 1;
             out->buf = b;
             out->next = NULL;

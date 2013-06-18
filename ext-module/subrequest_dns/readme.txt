@@ -1,4 +1,4 @@
-curl -X 'POST' -d '1.taobao.com
-2.taobao.com 
-3.taobao.com 
-4.taobao.com' '127.0.0.1:8366/'
+curl -X 'POST' -d '1.zieckey.com
+2.zieckey.com 
+3.zieckey.com 
+4.zieckey.com' '127.0.0.1:8366/'
