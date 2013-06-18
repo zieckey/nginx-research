@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+
+nginx/Debug/
+nginx/logs/
+nginx/nginx.ncb
+nginx/nginx.vcproj.CORP.weizili.user
+

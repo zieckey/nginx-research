@@ -1,0 +1,782 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0061)http://blog.csdn.net/livelylittlefish/article/details/7247080 -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>nginx源码分析—全局变量ngx_cycle的初始化 - 学习，思考，记录，分享。 - 博客频道 - CSDN.NET</title>
+
+<meta name="description" content="作者：阿波链接：http://blog.csdn.net/livelylittlefish/article/details/7247080Content0.序1. ngx_cycle_t结构2. ngx_init_cycle()分析3.注意问题3.1如何调用CORE模块的callback函数？3.2 open_files链表中的文件名何时初始化？4.小结">
+<script type="text/javascript" async="" src="./全局变量ngx_cycle的初始化_files/ga.js"></script><script src="./全局变量ngx_cycle的初始化_files/jquery.js" type="text/javascript"></script>
+<script src="./全局变量ngx_cycle的初始化_files/plugins.js" type="text/javascript"></script>
+<script src="./全局变量ngx_cycle的初始化_files/common.js" type="text/javascript"></script>
+<link rel="Stylesheet" type="text/css" href="./全局变量ngx_cycle的初始化_files/style.css">
+<link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="http://blog.csdn.net/livelylittlefish/rss/list">
+<link rel="shortcut icon" href="http://blog.csdn.net/favicon.ico">
+<link type="text/css" rel="stylesheet" href="./全局变量ngx_cycle的初始化_files/default.css">
+</head>
+<body>
+<script src="./全局变量ngx_cycle的初始化_files/pub_topnav_2011.js" type="text/javascript"></script><link rel="stylesheet" type="text/css" href="./全局变量ngx_cycle的初始化_files/navtop_2012.css">
+<div class="nav_top_2011">
+<p><span style="color:red;">您还未登录！</span>|<a href="http://passport.csdn.net/account/login">登录</a>|<a href="http://passport.csdn.net/account/register">注册</a>|<a href="http://passport.csdn.net/help/faq">帮助</a></p><ul>
+<li><a href="http://www.csdn.net/" target="_blank">CSDN首页</a></li>
+<li><a href="http://news.csdn.net/" target="_blank">资讯</a></li>
+<li><a href="http://bbs.csdn.net/" target="_blank">论坛</a></li>
+<li><a href="http://blog.csdn.net/" target="_blank">博客</a></li>
+<li><a href="http://download.csdn.net/" target="_blank">下载</a></li>
+<li><a href="http://so.csdn.net/" target="_blank">搜索</a></li>
+<li class="more"><h2 id="topnav_btnmore" onclick="showNavMore(this)"><a href="javascript:void(0);">更多</a></h2>
+<div id="topnav_hidlist">
+<iframe name="nav_frm" src="about:blank" width="92" height="262" scrolling="no" frameborder="no"></iframe>
+</div>
+</li>
+</ul>
+</div>
+
+
+<div id="container">
+<div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h1><a href="http://blog.csdn.net/livelylittlefish">学习，思考，记录，分享。</a></h1>
+            <h2>——坚持原创！请尊重作者劳动，转载注明出处！与 http://www.abo321.org 同步更新。</h2>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg"></div>
+    <div class="navigator">
+        <ul>
+            <li id="btnContents"><a href="http://blog.csdn.net/livelylittlefish?viewmode=contents"><span><img src="./全局变量ngx_cycle的初始化_files/ico_list.gif">目录视图</span></a></li>
+            <li id="btnView"><a href="http://blog.csdn.net/livelylittlefish?viewmode=list"><span><img src="./全局变量ngx_cycle的初始化_files/ico_summary.gif">摘要视图</span></a></li>
+            <li id="btnRss"><a href="http://blog.csdn.net/livelylittlefish/rss/list"><span><img src="./全局变量ngx_cycle的初始化_files/ico_rss.gif">订阅</span></a></li>
+</ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "livelylittlefish";
+    var blog_address = "http://blog.csdn.net/livelylittlefish";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";
+</script>
+        
+<div id="body">
+<div id="main">
+<div class="main">
+<div class="notice"> 
+
+
+<a href="http://cloud.csdn.net/a/20120620/2806805.html" target="_blank"><font color="red">用开源IaaS构建自己的云——OpenStack征稿启事
+</font></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://topic.csdn.net/u/20120709/15/2e6511e3-e34f-41d7-9f71-a47bb4f8c9fa.html" target="_blank"><font color="red">CSDN社区7月"畅谈加班 赢程序员杂志"活动火爆上线！！</font></a>
+<br>
+<a href="http://blog.csdn.net/blogdevteam/article/details/7712568" target="_blank"><font color="blue">
+2012年7月当选微软MVP的CSDN会员名单揭晓！ </font></a>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://topic.csdn.net/u/20120704/14/c98b3641-359f-4bea-b111-21c409db8819.html" target="_blank"><font color="red">CSDN账号全站整合公告
+</font></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://adclk.thinkmedia.cn/clk/pid=2000/media=CSDN.CN/place=1Clt1/size=760x90" target="_blank"><font color="blue">不用买彩票，就有408万！</font></a>
+
+
+</div><script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/ad.js"></script>
+
+<div id="article_details" class="details">
+    <div class="article_title">
+    <span class="ico ico_type_Original"></span>
+    <h3>
+        <span class="link_title"><a href="./全局变量ngx_cycle的初始化_files/全局变量ngx_cycle的初始化.htm">
+        nginx源码分析—全局变量ngx_cycle的初始化
+        </a></span>
+    </h3>
+</div>
+
+        
+    <div class="article_manage">
+        <span class="link_categories">
+        分类：
+            <a href="http://blog.csdn.net/livelylittlefish/article/category/838107">高性能服务器</a> 
+        </span>
+    <span class="link_postdate">2012-02-09 22:56</span>
+    <span class="link_view" title="阅读次数">1375人阅读</span>
+    <span class="link_comments" title="评论次数"><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#comments">评论</a>(5)</span>
+    <span class="link_collect"><a href="javascript:void(0);" onclick="javascript:collectArticle(&#39;nginx源码分析—全局变量ngx_cycle的初始化&#39;,&#39;7247080&#39;);return false;" title="收藏">收藏</a></span>
+    <span class="link_report"><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#report" onclick="javascript:report(7247080,2);return false;" title="举报">举报</a></span>
+    
+</div>
+
+    
+<div id="article_content" class="article_content">
+    
+<p>作者：阿波</p>
+<p>链接：<a href="./全局变量ngx_cycle的初始化_files/全局变量ngx_cycle的初始化.htm">http://blog.csdn.net/livelylittlefish/article/details/7247080</a></p>
+<p lang="en-US" style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">
+<span style="font-weight:bold">Content</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">0.</span><span style="font-family:宋体">序</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">1. ngx_cycle_t</span><span style="font-family:宋体">结构</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">2. ngx_init_cycle()</span><span style="font-family:宋体">分析</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">3.</span><span style="font-family:宋体"></span><span style="font-family:宋体">注意问题</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">3.1</span><span style="font-family:宋体">如何调用</span><span style="font-family:&#39;Lucida Console&#39;">CORE</span><span style="font-family:宋体">模块的</span><span style="font-family:&#39;Lucida Console&#39;">callback</span><span style="font-family:宋体">函数？</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">3.2 open_files</span><span style="font-family:宋体">链表中的文件名何时初始化？</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">4.</span><span style="font-family:宋体">小结</span></p>
+<p lang="en-US" style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">
+&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">0.</span><span style="font-family:宋体; font-weight:bold">序</span></p>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">Nginx的</span><span style="font-family:宋体">大部分</span><span style="font-family:&#39;Lucida Console&#39;">初始化工作主要围绕一个类型为ngx_cycle_t类型的全局变量</span><span style="font-family:&#39;Lucida Console&#39;">(</span><span style="font-family:&#39;Lucida Console&#39;">cycle</span><span style="font-family:&#39;Lucida Console&#39;">)</span><span style="font-family:&#39;Lucida Console&#39;">展开</span><span style="font-family:宋体">。本文重点介绍全局变量</span><span style="font-family:&#39;Lucida Console&#39;">ngx_cycle</span><span style="font-family:宋体">的初始化。</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:宋体">实现文件：</span><span style="font-family:&#39;Lucida Console&#39;">./src/core/ngx_cycle.c</span><span style="font-family:宋体">。</span><span style="font-family:&#39;Lucida Console&#39;">.</span><span style="font-family:宋体">表示</span><span style="font-family:&#39;Lucida Console&#39;">nginx-1.0.4</span><span style="font-family:宋体">代码目录，本文为</span><span style="font-family:&#39;Lucida Console&#39;">/usr/src/nginx-1.0.4</span><span style="font-family:宋体">。</span></p>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">1. ngx_cycle_t</span><span style="font-family:宋体; font-weight:bold">结构</span></p>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:宋体">该结构在</span><span style="font-family:&#39;Lucida Console&#39;">./src/core/ngx_cycle.h</span><span style="font-family:宋体">文件中定义，如下。</span></p>
+<div class="dp-highlighter bg_cpp"><div class="bar"><div class="tools"><b>[cpp]</b> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="ViewSource" title="view plain" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="CopyToClipboard" title="copy" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="PrintSource" title="print" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="About" title="?" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a><div style="position: absolute; left: 557px; top: 975px; width: 18px; height: 18px; z-index: 99; "><embed id="ZeroClipboardMovie_1" src="http://static.blog.csdn.net/scripts/ZeroClipboard/ZeroClipboard.swf" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="18" height="18" name="ZeroClipboardMovie_1" align="middle" allowscriptaccess="always" allowfullscreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="id=1&amp;width=18&amp;height=18" wmode="transparent"></div></div></div><ol start="1" class="dp-cpp"><li class="alt"><span><span class="keyword">struct</span><span>&nbsp;ngx_cycle_s&nbsp;{&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">void</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;****conf_ctx;&nbsp;&nbsp;</span><span class="comment">//配置上下文数组(含所有模块)</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_pool_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*pool;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//内存池</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_log_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*log;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//日志</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_log_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new_log;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_connection_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**files;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//连接文件</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_connection_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*free_connections;&nbsp;&nbsp;<span class="comment">//空闲连接</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_uint_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free_connection_n;&nbsp;<span class="comment">//空闲连接个数</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_queue_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;reusable_connections_queue;&nbsp;&nbsp;<span class="comment">//再利用连接队列</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_array_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;listening;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//监听数组</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_array_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pathes;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//路径数组</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_list_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;open_files;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//打开文件链表</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_list_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;shared_memory;&nbsp;<span class="comment">//共享内存链表</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_uint_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connection_n;&nbsp;&nbsp;<span class="comment">//连接个数</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_uint_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;files_n;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//打开文件个数</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_connection_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*connections;&nbsp;&nbsp;&nbsp;<span class="comment">//连接</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_event_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*read_events;&nbsp;&nbsp;&nbsp;<span class="comment">//读事件</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_event_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*write_events;&nbsp;&nbsp;<span class="comment">//写事件</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_cycle_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*old_cycle;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//old&nbsp;cycle指针</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_str_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conf_file;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//配置文件</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_str_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conf_param;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//配置参数</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_str_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;conf_prefix;&nbsp;&nbsp;&nbsp;<span class="comment">//配置前缀</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_str_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;prefix;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//前缀</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_str_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lock_file;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//锁文件</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_str_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hostname;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//主机名</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>};&nbsp;&nbsp;</span></li></ol></div><pre class="cpp" name="code" style="display: none; ">struct ngx_cycle_s {
+    void                  ****conf_ctx;  //配置上下文数组(含所有模块)
+    ngx_pool_t               *pool;      //内存池
+
+    ngx_log_t                *log;       //日志
+    ngx_log_t                 new_log;
+
+    ngx_connection_t        **files;     //连接文件
+    ngx_connection_t         *free_connections;  //空闲连接
+    ngx_uint_t                free_connection_n; //空闲连接个数
+
+    ngx_queue_t               reusable_connections_queue;  //再利用连接队列
+
+    ngx_array_t               listening;     //监听数组
+    ngx_array_t               pathes;        //路径数组
+    ngx_list_t                open_files;    //打开文件链表
+    ngx_list_t                shared_memory; //共享内存链表
+
+    ngx_uint_t                connection_n;  //连接个数
+    ngx_uint_t                files_n;       //打开文件个数
+
+    ngx_connection_t         *connections;   //连接
+    ngx_event_t              *read_events;   //读事件
+    ngx_event_t              *write_events;  //写事件
+
+    ngx_cycle_t              *old_cycle;     //old cycle指针
+
+    ngx_str_t                 conf_file;     //配置文件
+    ngx_str_t                 conf_param;    //配置参数
+    ngx_str_t                 conf_prefix;   //配置前缀
+    ngx_str_t                 prefix;        //前缀
+    ngx_str_t                 lock_file;     //锁文件
+    ngx_str_t                 hostname;      //主机名
+};</pre>
+<p style="margin:0in; font-size:10pt"><span style="font-family:宋体">该结构体的大小是确定的，</span><span style="font-family:&#39;Lucida Console&#39;">sizeof(ngx_cycle_t)</span><span style="font-family:&#39;Lucida Console&#39;">=224</span><span style="font-family:宋体">。</span></p>
+<p style="margin:0in; font-family:宋体; font-size:10pt">其中，</p>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">pathes</span><span style="font-family:宋体; font-size:10pt">数组元素结构为</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_path_t</span><span style="font-family:宋体; font-size:10pt">；</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">open_files</span><span style="font-family:宋体; font-size:10pt">链表元素结构为</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_open_file_t</span><span style="font-family:宋体; font-size:10pt">；</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">shared_memory</span><span style="font-family:宋体; font-size:10pt">链表元素结构为</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_shm_zone_t</span><span style="font-family:宋体; font-size:10pt">；</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">listening</span><span style="font-family:宋体; font-size:10pt">数组元素结构为</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_listening_t</span><span style="font-family:宋体; font-size:10pt">，该数组用来存放监听套接字。</span></li></ul>
+<p style="margin:0in; font-family:宋体; font-size:10pt">各种数据结构关系图如下。</p>
+<p style="margin:0in; font-size:10pt"><img alt="" src="./全局变量ngx_cycle的初始化_files/0_1328799724GTUk.gif" width="701" height="592"></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold"></span>&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">2. ngx_init_cycle()</span><span style="font-family:宋体; font-weight:bold">分析</span></p>
+<p style="margin:0in; font-family:宋体; font-size:10pt">初始化过程如下。</p>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">调用</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_timezone_update()</span><span style="font-family:宋体; font-size:10pt">更新时区，调用</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_time_update()</span><span style="font-family:宋体; font-size:10pt">更新时间</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">创建大小为</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">NGX_CYCLE_POOL_SIZE=16384B</span><span style="font-family:宋体; font-size:10pt">的内存池，并从中分配</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_cycle_t</span><span style="font-family:宋体; font-size:10pt">结构</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">简单初始化，如记录</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">pool</span><span style="font-family:宋体; font-size:10pt">指针、</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">log</span><span style="font-family:宋体; font-size:10pt">指针</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">初始化配置前缀、前缀、配置文件、配置参数等字符串</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">初始化</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">pathes</span><span style="font-family:宋体; font-size:10pt">数组</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">初始化</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">open_files</span><span style="font-family:宋体; font-size:10pt">链表</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">初始化</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">shared_memory</span><span style="font-family:宋体; font-size:10pt">链表</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">初始化</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">listening</span><span style="font-family:宋体; font-size:10pt">数组</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">初始化</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">resuable_connections_queue</span><span style="font-family:宋体; font-size:10pt">队列</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">从</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">pool</span><span style="font-family:宋体; font-size:10pt">为</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">conf_ctx</span><span style="font-family:宋体; font-size:10pt">分配空间</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">初始化</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">hostname</span><span style="font-family:宋体; font-size:10pt">字符串</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">调用</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">core</span><span style="font-family:宋体; font-size:10pt">模块的</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">create_conf()</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">配置文件解析</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">调用</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">core</span><span style="font-family:宋体; font-size:10pt">模块的</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">init_conf()</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">遍历</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">open_files</span><span style="font-family:宋体; font-size:10pt">链表中的每一个文件并打开</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">创建共享内存并初始化</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">(</span><span style="font-family:宋体; font-size:10pt">新旧</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">shared_memory</span><span style="font-family:宋体; font-size:10pt">链表的比较，相同的共享内存保留，旧的不同的共享内存被释放，新的被创建</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">)</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">(</span><span style="font-family:宋体; font-size:10pt">尝试</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">5</span><span style="font-family:宋体; font-size:10pt">遍</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">)</span><span style="font-family:宋体; font-size:10pt">遍历</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">listening</span><span style="font-family:宋体; font-size:10pt">数组并打开所有侦听</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">sockets(socket()-&gt;setsockopt()-&gt;bind()-&gt;</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">listen</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">())</span></li></ul>
+<ul type="disc" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">提交新的</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">cycle</span><span style="font-family:宋体; font-size:10pt">配置，并调用所有模块的</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">init_module(</span><span style="font-family:宋体; font-size:10pt">实际上只有</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_event_core_module</span><span style="font-family:宋体; font-size:10pt">模块定义了该</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">callback</span><span style="font-family:宋体; font-size:10pt">，即只有</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">ngx_event_module_init</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">()</span><span style="font-family:宋体; font-size:10pt">被调用</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">)</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">关闭或删除残留在</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">old_cycle</span><span style="font-family:宋体; font-size:10pt">中的资源</span>
+<ul type="circle" style="margin-top:0in; unicode-bidi:embed; direction:ltr; margin-bottom:0in; margin-left:0.375in">
+<li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">释放多余的共享内存</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">关闭多余的侦听</span><span style="font-family:&#39;Lucida Console&#39;; font-size:10pt">sockets</span></li><li style="margin-top:0px; margin-bottom:0px; vertical-align:middle"><span style="font-family:宋体; font-size:10pt">关闭多余的打开文件</span></li></ul>
+</li></ul>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">具体请参考附录代码，不需要细究每一步实现，重要的是要搞清楚其初始化流程。&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:宋体">简要的函数调用图如下。图的自动生成，可参考</span><a href="http://www.ibm.com/developerworks/cn/linux/l-graphvis"><span style="font-family:&#39;Lucida Console&#39;">&lt;</span><span style="font-family:宋体">用</span><span style="font-family:&#39;Lucida Console&#39;">Graphviz</span><span style="font-family:宋体">可视化函数调用</span><span style="font-family:&#39;Lucida Console&#39;">-</span><span style="font-family:宋体">使用开源软件来简化复杂调用结构</span><span style="font-family:&#39;Lucida Console&#39;">&gt;</span></a><span style="font-family:宋体">。</span></p>
+<p><img alt="" src="./全局变量ngx_cycle的初始化_files/0_1328799830HXMt.gif" width="720" height="69"></p>
+<p><span style="font-family:宋体">初始化过程中全局结构</span><span style="font-family:&#39;Lucida Console&#39;">ngx_cycle</span><span style="font-family:宋体">结构图如下。</span></p>
+<p><img alt="" src="./全局变量ngx_cycle的初始化_files/0_1328799741EKWP.gif" width="717" height="452"></p>
+<p><span style="font-family:&#39;Lucida Console&#39;">main()</span><span style="font-family:宋体">调用</span><span style="font-family:&#39;Lucida Console&#39;">ngx_init_cycle()</span><span style="font-family:宋体">后，全局变量</span><span style="font-family:&#39;Lucida Console&#39;">ngx_cycle</span><span style="font-family:宋体">的内容如下。可对比上图查看。</span></p>
+<div class="dp-highlighter bg_plain"><div class="bar"><div class="tools"><b>[plain]</b> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="ViewSource" title="view plain" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="CopyToClipboard" title="copy" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="PrintSource" title="print" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="About" title="?" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a><div style="position: absolute; left: 566px; top: 3898px; width: 18px; height: 18px; z-index: 99; "><embed id="ZeroClipboardMovie_2" src="http://static.blog.csdn.net/scripts/ZeroClipboard/ZeroClipboard.swf" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="18" height="18" name="ZeroClipboardMovie_2" align="middle" allowscriptaccess="always" allowfullscreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="id=2&amp;width=18&amp;height=18" wmode="transparent"></div></div></div><ol start="1"><li class="alt"><span><span>(gdb)&nbsp;p&nbsp;*ngx_cycle&nbsp;&nbsp;</span></span></li><li class=""><span>$3&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;conf_ctx&nbsp;=&nbsp;0x6b1060,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;pool&nbsp;=&nbsp;0x6b0280,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;log&nbsp;=&nbsp;0x6b02e8,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;new_log&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;log_level&nbsp;=&nbsp;4,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;file&nbsp;=&nbsp;0x6b0558,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;connection&nbsp;=&nbsp;0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;handler&nbsp;=&nbsp;0,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;0x0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;action&nbsp;=&nbsp;0x0&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;files&nbsp;=&nbsp;0x0,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;free_connections&nbsp;=&nbsp;0x0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;free_connection_n&nbsp;=&nbsp;0,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;reusable_connections_queue&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;prev&nbsp;=&nbsp;0x6b0330,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;next&nbsp;=&nbsp;0x6b0330&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;listening&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;elts&nbsp;=&nbsp;0x6b0930,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;nelts&nbsp;=&nbsp;1,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;184,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;nalloc&nbsp;=&nbsp;10,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;pool&nbsp;=&nbsp;0x6b0280&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;pathes&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;elts&nbsp;=&nbsp;0x6b04d8,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;nelts&nbsp;=&nbsp;5,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;8,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;nalloc&nbsp;=&nbsp;10,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;pool&nbsp;=&nbsp;0x6b0280&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;open_files&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;last&nbsp;=&nbsp;0x6b0398,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;part&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elts&nbsp;=&nbsp;0x6b0528,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nelts&nbsp;=&nbsp;2,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;next&nbsp;=&nbsp;0x0&nbsp;&nbsp;</span></li><li class="alt"><span>---Type&nbsp;&lt;return&gt;&nbsp;to&nbsp;continue,&nbsp;or&nbsp;q&nbsp;&lt;return&gt;&nbsp;to&nbsp;quit---&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;48,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;nalloc&nbsp;=&nbsp;20,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;pool&nbsp;=&nbsp;0x6b0280&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;shared_memory&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;last&nbsp;=&nbsp;0x6b03d0,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;part&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;elts&nbsp;=&nbsp;0x6b08e8,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nelts&nbsp;=&nbsp;0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;next&nbsp;=&nbsp;0x0&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;size&nbsp;=&nbsp;72,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;nalloc&nbsp;=&nbsp;1,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;pool&nbsp;=&nbsp;0x6b0280&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;connection_n&nbsp;=&nbsp;1024,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;files_n&nbsp;=&nbsp;0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;connections&nbsp;=&nbsp;0x0,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;read_events&nbsp;=&nbsp;0x0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;write_events&nbsp;=&nbsp;0x0,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;old_cycle&nbsp;=&nbsp;0x0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;conf_file&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;len&nbsp;=&nbsp;32,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;0x6b04b7&nbsp;"/usr/local/nginx/conf/nginx.conf"&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;conf_param&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;len&nbsp;=&nbsp;0,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;0x6b04d8&nbsp;"\240{l"&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;conf_prefix&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;len&nbsp;=&nbsp;22,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;0x6b0490&nbsp;"/usr/local/nginx/conf//usr/local/nginx//usr/local/nginx/conf/nginx.conf"&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;prefix&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;len&nbsp;=&nbsp;17,&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;0x6b04a6&nbsp;"/usr/local/nginx//usr/local/nginx/conf/nginx.conf"&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;lock_file&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class="alt"><span>---Type&nbsp;&lt;return&gt;&nbsp;to&nbsp;continue,&nbsp;or&nbsp;q&nbsp;&lt;return&gt;&nbsp;to&nbsp;quit---&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;len&nbsp;=&nbsp;33,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;0x6ccee0&nbsp;"/usr/local/nginx/logs/nginx.lock.accept"&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;},&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;hostname&nbsp;=&nbsp;{&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;len&nbsp;=&nbsp;4,&nbsp;&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;=&nbsp;0x6b11c0&nbsp;"yu30"&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li class="alt"><span>}&nbsp;&nbsp;</span></li></ol></div><pre class="plain" name="code" style="display: none; ">(gdb) p *ngx_cycle
+$3 = {
+  conf_ctx = 0x6b1060, 
+  pool = 0x6b0280, 
+  log = 0x6b02e8, 
+  new_log = {
+    log_level = 4, 
+    file = 0x6b0558, 
+    connection = 0, 
+    handler = 0, 
+    data = 0x0, 
+    action = 0x0
+  }, 
+  files = 0x0, 
+  free_connections = 0x0, 
+  free_connection_n = 0, 
+  reusable_connections_queue = {
+    prev = 0x6b0330, 
+    next = 0x6b0330
+  }, 
+  listening = {
+    elts = 0x6b0930, 
+    nelts = 1, 
+    size = 184, 
+    nalloc = 10, 
+    pool = 0x6b0280
+  }, 
+  pathes = {
+    elts = 0x6b04d8, 
+    nelts = 5, 
+    size = 8, 
+    nalloc = 10, 
+    pool = 0x6b0280
+  }, 
+  open_files = {
+    last = 0x6b0398, 
+    part = {
+      elts = 0x6b0528, 
+      nelts = 2, 
+      next = 0x0
+---Type &lt;return&gt; to continue, or q &lt;return&gt; to quit---
+    }, 
+    size = 48, 
+    nalloc = 20, 
+    pool = 0x6b0280
+  }, 
+  shared_memory = {
+    last = 0x6b03d0, 
+    part = {
+      elts = 0x6b08e8, 
+      nelts = 0, 
+      next = 0x0
+    }, 
+    size = 72, 
+    nalloc = 1, 
+    pool = 0x6b0280
+  }, 
+  connection_n = 1024, 
+  files_n = 0, 
+  connections = 0x0, 
+  read_events = 0x0, 
+  write_events = 0x0, 
+  old_cycle = 0x0, 
+  conf_file = {
+    len = 32, 
+    data = 0x6b04b7 "/usr/local/nginx/conf/nginx.conf"
+  }, 
+  conf_param = {
+    len = 0, 
+    data = 0x6b04d8 "\240{l"
+  }, 
+  conf_prefix = {
+    len = 22, 
+    data = 0x6b0490 "/usr/local/nginx/conf//usr/local/nginx//usr/local/nginx/conf/nginx.conf"
+  }, 
+  prefix = {
+    len = 17, 
+    data = 0x6b04a6 "/usr/local/nginx//usr/local/nginx/conf/nginx.conf"
+  }, 
+  lock_file = {
+---Type &lt;return&gt; to continue, or q &lt;return&gt; to quit---
+    len = 33, 
+    data = 0x6ccee0 "/usr/local/nginx/logs/nginx.lock.accept"
+  }, 
+  hostname = {
+    len = 4, 
+    data = 0x6b11c0 "yu30"
+  }
+}</pre>
+<p>&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">3.</span><span style="font-family:宋体; font-weight:bold"></span><span style="font-family:宋体; font-weight:bold">注意问题</span></p>
+<p style="margin:0in; font-family:宋体; font-size:10pt">&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">3.1</span><span style="font-family:宋体; font-weight:bold">如何调用</span><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">CORE</span><span style="font-family:宋体; font-weight:bold">模块的</span><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">callback</span><span style="font-family:宋体; font-weight:bold">函数？</span></p>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:宋体">即如可调用</span><span style="font-family:&#39;Lucida Console&#39;">core</span><span style="font-family:宋体">模块的</span><span style="font-family:&#39;Lucida Console&#39;">create_conf()</span><span style="font-family:宋体">和</span><span style="font-family:&#39;Lucida Console&#39;">init_conf()</span><span style="font-family:宋体">？</span></p>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">(1) callback</span><span style="font-family:宋体">定义</span></p>
+<p lang="en-US" style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">
+file: ./src/core/ngx_conf_file.h</p>
+<div class="dp-highlighter bg_cpp"><div class="bar"><div class="tools"><b>[cpp]</b> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="ViewSource" title="view plain" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="CopyToClipboard" title="copy" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="PrintSource" title="print" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="About" title="?" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a><div style="position: absolute; left: 557px; top: 5838px; width: 18px; height: 18px; z-index: 99; "><embed id="ZeroClipboardMovie_3" src="http://static.blog.csdn.net/scripts/ZeroClipboard/ZeroClipboard.swf" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="18" height="18" name="ZeroClipboardMovie_3" align="middle" allowscriptaccess="always" allowfullscreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="id=3&amp;width=18&amp;height=18" wmode="transparent"></div></div></div><ol start="1" class="dp-cpp"><li class="alt"><span><span class="keyword">typedef</span><span>&nbsp;</span><span class="keyword">struct</span><span>&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="comment">//定义core模块上下文类型</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_str_t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//模块名，即ngx_core_module_ctx结构体对象的ngx_string("core")</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">void</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(*create_conf)(ngx_cycle_t&nbsp;*cycle);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="comment">//创建配置的callback</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="datatypes">char</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(*init_conf)(ngx_cycle_t&nbsp;*cycle,&nbsp;</span><span class="keyword">void</span><span>&nbsp;*conf);&nbsp;</span><span class="comment">//初始化配置的callback</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>}&nbsp;ngx_core_module_t;&nbsp;&nbsp;</span></li></ol></div><pre class="cpp" name="code" style="display: none; ">typedef struct {          //定义core模块上下文类型
+    ngx_str_t             name;            //模块名，即ngx_core_module_ctx结构体对象的ngx_string("core")
+    void               *(*create_conf)(ngx_cycle_t *cycle);           //创建配置的callback
+    char               *(*init_conf)(ngx_cycle_t *cycle, void *conf); //初始化配置的callback
+} ngx_core_module_t;</pre>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;">(2) callback</span><span style="font-family:宋体">初始化</span></p>
+<p lang="en-US" style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">
+<span style="font-family:宋体">静态初始化</span><span style="font-family:&#39;Lucida Console&#39;">ngx_core_module_ctx</span><span style="font-family:宋体">和</span><span style="font-family:&#39;Lucida Console&#39;">ngx_core_module</span><span style="font-family:宋体">结构。在编译期间就已确定</span><span style="font-family:&#39;Lucida Console&#39;">CORE</span><span style="font-family:宋体">模块的</span><span style="font-family:&#39;Lucida Console&#39;">callback</span><span style="font-family:宋体">了。</span></p>
+<p lang="en-US" style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">
+file: ./src/core/nginx.c</p>
+<div class="dp-highlighter bg_cpp"><div class="bar"><div class="tools"><b>[cpp]</b> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="ViewSource" title="view plain" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="CopyToClipboard" title="copy" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="PrintSource" title="print" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="About" title="?" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a><div style="position: absolute; left: 557px; top: 6131px; width: 18px; height: 18px; z-index: 99; "><embed id="ZeroClipboardMovie_4" src="http://static.blog.csdn.net/scripts/ZeroClipboard/ZeroClipboard.swf" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="18" height="18" name="ZeroClipboardMovie_4" align="middle" allowscriptaccess="always" allowfullscreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="id=4&amp;width=18&amp;height=18" wmode="transparent"></div></div></div><ol start="1" class="dp-cpp"><li class="alt"><span><span class="keyword">static</span><span>&nbsp;ngx_core_module_t&nbsp;&nbsp;ngx_core_module_ctx&nbsp;=&nbsp;{&nbsp;&nbsp;</span><span class="comment">//定义ngx_core_module模块上下文,改方式属于静态初始化</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_string(<span class="string">"core"</span><span>),&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_core_module_create_conf,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_core_module_init_conf&nbsp;&nbsp;</span></li><li class="alt"><span>};&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>ngx_module_t&nbsp;&nbsp;ngx_core_module&nbsp;=&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//定义ngx_core_module模块,也是静态初始化</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;NGX_MODULE_V1,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&amp;ngx_core_module_ctx,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;module&nbsp;context&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;ngx_core_commands,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;module&nbsp;directives&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;NGX_CORE_MODULE,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;module&nbsp;type&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;NULL,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;init&nbsp;master&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;NULL,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;init&nbsp;module&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;NULL,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;init&nbsp;process&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;NULL,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;init&nbsp;thread&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;NULL,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;exit&nbsp;thread&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;NULL,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;exit&nbsp;process&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;NULL,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;exit&nbsp;master&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;NGX_MODULE_V1_PADDING&nbsp;&nbsp;</span></li><li class="alt"><span>};&nbsp;&nbsp;</span></li></ol></div><pre class="cpp" name="code" style="display: none; ">static ngx_core_module_t  ngx_core_module_ctx = {  //定义ngx_core_module模块上下文,改方式属于静态初始化
+    ngx_string("core"),
+    ngx_core_module_create_conf,
+    ngx_core_module_init_conf
+};
+
+
+ngx_module_t  ngx_core_module = {          //定义ngx_core_module模块,也是静态初始化
+    NGX_MODULE_V1,
+    &amp;ngx_core_module_ctx,                  /* module context */
+    ngx_core_commands,                     /* module directives */
+    NGX_CORE_MODULE,                       /* module type */
+    NULL,                                  /* init master */
+    NULL,                                  /* init module */
+    NULL,                                  /* init process */
+    NULL,                                  /* init thread */
+    NULL,                                  /* exit thread */
+    NULL,                                  /* exit process */
+    NULL,                                  /* exit master */
+    NGX_MODULE_V1_PADDING
+};</pre>
+<p style="margin:0in; font-size:10pt"><span style="font-family:宋体">静态初始化</span><span style="font-family:&#39;Lucida Console&#39;">ngx_core_commands</span><span style="font-family:宋体">结构。</span></p>
+<p style="margin:0in; font-family:宋体; font-size:10pt">file: ./src/core/nginx.c</p>
+<div class="dp-highlighter bg_cpp"><div class="bar"><div class="tools"><b>[cpp]</b> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="ViewSource" title="view plain" onclick="dp.sh.Toolbar.Command(&#39;ViewSource&#39;,this);return false;">view plain</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="CopyToClipboard" title="copy" onclick="dp.sh.Toolbar.Command(&#39;CopyToClipboard&#39;,this);return false;">copy</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="PrintSource" title="print" onclick="dp.sh.Toolbar.Command(&#39;PrintSource&#39;,this);return false;">print</a><a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="About" title="?" onclick="dp.sh.Toolbar.Command(&#39;About&#39;,this);return false;">?</a><div style="position: absolute; left: 557px; top: 6649px; width: 18px; height: 18px; z-index: 99; "><embed id="ZeroClipboardMovie_5" src="http://static.blog.csdn.net/scripts/ZeroClipboard/ZeroClipboard.swf" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="18" height="18" name="ZeroClipboardMovie_5" align="middle" allowscriptaccess="always" allowfullscreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="id=5&amp;width=18&amp;height=18" wmode="transparent"></div></div></div><ol start="1" class="dp-cpp"><li class="alt"><span><span class="keyword">static</span><span>&nbsp;ngx_command_t&nbsp;&nbsp;ngx_core_commands[]&nbsp;=&nbsp;{&nbsp;&nbsp;</span><span class="comment">//静态初始化core模块的命令</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"daemon"</span><span>),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_FLAG,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_flag_slot,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;daemon),&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"master_process"</span><span>),&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_FLAG,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_flag_slot,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;master),&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"timer_resolution"</span><span>),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_msec_slot,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;timer_resolution),&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"pid"</span><span>),&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_str_slot,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;pid),&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"lock_file"</span><span>),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_str_slot,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;lock_file),&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"worker_processes"</span><span>),&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_num_slot,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;worker_processes),&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">/*&nbsp;...&nbsp;省略中间的定义&nbsp;*/</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="preprocessor">#if&nbsp;(NGX_THREADS)</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"worker_threads"</span><span>),&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_num_slot,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;worker_threads),&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;ngx_string(<span class="string">"thread_stack_size"</span><span>),&nbsp;&nbsp;</span></span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_conf_set_size_slot,&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0,&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offsetof(ngx_core_conf_t,&nbsp;thread_stack_size),&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NULL&nbsp;},&nbsp;&nbsp;</span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span><span class="preprocessor">#endif</span><span>&nbsp;&nbsp;</span></span></li><li class=""><span>&nbsp;&nbsp;</span></li><li class="alt"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ngx_null_command&nbsp;&nbsp;</span></li><li class=""><span>};&nbsp;&nbsp;</span></li></ol></div><pre class="cpp" name="code" style="display: none; ">static ngx_command_t  ngx_core_commands[] = {  //静态初始化core模块的命令
+
+    { ngx_string("daemon"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_FLAG,
+      ngx_conf_set_flag_slot,
+      0,
+      offsetof(ngx_core_conf_t, daemon),
+      NULL },
+
+    { ngx_string("master_process"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_FLAG,
+      ngx_conf_set_flag_slot,
+      0,
+      offsetof(ngx_core_conf_t, master),
+      NULL },
+
+    { ngx_string("timer_resolution"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_msec_slot,
+      0,
+      offsetof(ngx_core_conf_t, timer_resolution),
+      NULL },
+
+    { ngx_string("pid"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_str_slot,
+      0,
+      offsetof(ngx_core_conf_t, pid),
+      NULL },
+
+    { ngx_string("lock_file"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_str_slot,
+      0,
+      offsetof(ngx_core_conf_t, lock_file),
+      NULL },
+
+    { ngx_string("worker_processes"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_num_slot,
+      0,
+      offsetof(ngx_core_conf_t, worker_processes),
+      NULL },
+
+    /* ... 省略中间的定义 */
+
+#if (NGX_THREADS)
+
+    { ngx_string("worker_threads"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_num_slot,
+      0,
+      offsetof(ngx_core_conf_t, worker_threads),
+      NULL },
+
+    { ngx_string("thread_stack_size"),
+      NGX_MAIN_CONF|NGX_DIRECT_CONF|NGX_CONF_TAKE1,
+      ngx_conf_set_size_slot,
+      0,
+      offsetof(ngx_core_conf_t, thread_stack_size),
+      NULL },
+
+#endif
+
+      ngx_null_command
+};</pre>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">3.2 open_files</span><span style="font-family:宋体; font-weight:bold">链表中的文件名何时初始化？</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:宋体">在初始化</span><span style="font-family:&#39;Lucida Console&#39;">open_files</span><span style="font-family:宋体">链表之后遍历该链表并打开文件之前，并未看到向</span><span style="font-family:&#39;Lucida Console&#39;">open_files</span><span style="font-family:宋体">链表中写入文件名。那么，何时写入</span><span style="font-family:&#39;Lucida Console&#39;">open_files</span><span style="font-family:宋体">链表的？</span></p>
+<p style="margin:0in; font-family:宋体; font-size:10pt"><span style="font-family:宋体">——在</span><span style="font-family:&#39;Lucida Console&#39;">ngx_conf_open_file</span><span style="font-family:宋体">函数中写入。</span></p>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt"><span style="font-family:宋体">具体请参考源代码。打开文件后，</span><span style="font-family:&#39;Lucida Console&#39;">open_files</span><span style="font-family:宋体">链表就保存了</span><span style="font-family:&#39;Lucida Console&#39;">ngx_open_file_t</span><span style="font-family:宋体">结构的数据，具体请参考该结构定义。</span></p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">4.</span><span style="font-family:宋体; font-weight:bold">小结</span></p>
+<p style="margin:0in; font-family:宋体; font-size:10pt"><span style="font-family:宋体">本文主要分析</span><span style="font-family:&#39;Lucida Console&#39;">ngx_cycle</span><span style="font-family:宋体">的初始化，后文继续分析其中调用的</span><span style="font-family:&#39;Lucida Console&#39;">CORE</span><span style="font-family:宋体">模块的</span><span style="font-family:&#39;Lucida Console&#39;">callback</span><span style="font-family:宋体">和配置文件解析等。</span></p>
+<p style="margin:0in; font-family:&#39;Lucida Console&#39;; font-size:10pt">&nbsp;</p>
+<p style="margin:0in; font-size:10pt"><span style="font-family:&#39;Lucida Console&#39;; font-weight:bold">Appendix: ngx_init_cycle()</span><span style="font-family:宋体; font-weight:bold">代码</span></p>
+省略，可自行研究。
+
+</div>
+<div class="share_buttons" id="sharePanel"><span>分享到：</span> <a name="sina" class="share_sina" title="分享到新浪微博"></a><a name="qq" class="share_qq" title="分享到腾讯微博"></a></div>
+<!--192.168.1.236 2012-7-15 10:09:52-->
+<div class="article_next_prev">
+        <li class="prev_article">
+            <span>上一篇：</span><a href="http://blog.csdn.net/livelylittlefish/article/details/7243718">nginx源码分析—启动流程</a></li>
+        <li class="next_article">
+            <span>下一篇：</span><a href="http://blog.csdn.net/livelylittlefish/article/details/7262750">nginx源码分析—core模块callback</a></li>
+</div>
+
+
+        <div id="digg" articleid="7247080">
+            <dl id="btnDigg" class="digg digg_disable">
+                <dt>顶</dt>
+                <dd>12</dd>
+            </dl>
+            <dl id="btnBury" class="digg digg_disable">
+                <dt>踩</dt>
+                <dd>0</dd>
+            </dl>
+        </div>
+</div>
+<div id="ad_cen"><iframe id="ad_frm_0" frameborder="0" scrolling="no" style="border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; overflow-x: hidden; overflow-y: hidden; width: 732px; height: 95px; " src="./全局变量ngx_cycle的初始化_files/ad(1).htm"></iframe></div>
+<script type="text/javascript">
+    new Ad(4, 'ad_cen');
+</script>
+<div id="comment_title" class="panel_head">查看评论<a name="comments"></a></div>
+<div id="comment_list"><dl class="comment_item comment_topic" id="comment_item_2154960"><dt class="comment_head" floor="4">4楼 <span class="user"><a class="username" href="http://blog.csdn.net/hicoding" target="_blank">hicoding</a> <span class="ptime">2012-04-01 21:18发表</span>  <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#reply" class="cmt_btn reply" title="回复">[回复]</a> <span class="comment_manage" style="display:none;" commentid="2154960" username="hicoding"> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#quote" class="cmt_btn quote" title="引用">[引用]</a> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#report" class="cmt_btn report" title="举报">[举报]</a></span></span></dt><dd class="comment_userface"><a href="http://blog.csdn.net/hicoding" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/3_hicoding.jpg" width="40" height="40"></a></dd><dd class="comment_body">问一个问题：： 关于处理负载均衡的问题：ngx_process_events_and_timers函数里面<br>if (ngx_accept_disabled &gt; 0) { // 连接数过多 不再接受新连接<br>            ngx_accept_disabled--;<br>}<br>为什么这样就可以不接受新连接，它并没有关闭监听套接字的读事件啊？？<br>我只在 ngx_trylock_accept_mutex 这个里面发现本进程抢不到锁就关闭连接， 其它地方没有发现。如果不去抢锁失败是不会关闭连接的。困惑啊！！！</dd></dl><dl class="comment_item comment_topic" id="comment_item_2127097"><dt class="comment_head" floor="3">3楼 <span class="user"><a class="username" href="http://blog.csdn.net/dldx_062" target="_blank">dldx_062</a> <span class="ptime">2012-03-12 00:58发表</span>  <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#reply" class="cmt_btn reply" title="回复">[回复]</a> <span class="comment_manage" style="display:none;" commentid="2127097" username="dldx_062"> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#quote" class="cmt_btn quote" title="引用">[引用]</a> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#report" class="cmt_btn report" title="举报">[举报]</a></span></span></dt><dd class="comment_userface"><a href="http://blog.csdn.net/dldx_062" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/3_dldx_062.jpg" width="40" height="40"></a></dd><dd class="comment_body">希望你能够考虑一下，能够给一个简单的建议也行</dd><dl class="comment_item comment_reply" id="comment_item_2127175"><dt class="comment_head" floor="3">Re: <span class="user"><a class="username" href="http://blog.csdn.net/livelylittlefish" target="_blank">livelylittlefish</a> <span class="ptime">2012-03-12 08:51发表</span>  <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#reply" class="cmt_btn reply" title="回复">[回复]</a> <span class="comment_manage" style="display:none;" commentid="2127175" username="livelylittlefish"> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#quote" class="cmt_btn quote" title="引用">[引用]</a> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#report" class="cmt_btn report" title="举报">[举报]</a></span></span></dt><dd class="comment_userface"><a href="http://blog.csdn.net/livelylittlefish" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/3_livelylittlefish.jpg" width="40" height="40"></a></dd><dd class="comment_body">回复dldx_062：谢谢，我不是什么大牛啊。在调试的时候用的就是GDB。</dd></dl></dl><dl class="comment_item comment_topic" id="comment_item_2127096"><dt class="comment_head" floor="2">2楼 <span class="user"><a class="username" href="http://blog.csdn.net/dldx_062" target="_blank">dldx_062</a> <span class="ptime">2012-03-12 00:57发表</span>  <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#reply" class="cmt_btn reply" title="回复">[回复]</a> <span class="comment_manage" style="display:none;" commentid="2127096" username="dldx_062"> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#quote" class="cmt_btn quote" title="引用">[引用]</a> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#report" class="cmt_btn report" title="举报">[举报]</a></span></span></dt><dd class="comment_userface"><a href="http://blog.csdn.net/dldx_062" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/3_dldx_062.jpg" width="40" height="40"></a></dd><dd class="comment_body">LZ看你的文章写得都不错，希望你能不能写这么一篇文章，来介绍一下，你在研究、阅读Nginx这个源代码的时候，一些调试方法和步骤，这也许对于你这样的大牛来说也许很简单，但对于我们这样的菜鸟来说的话就真是一个救命稻草了</dd></dl><dl class="comment_item comment_topic" id="comment_item_2096000"><dt class="comment_head" floor="1">1楼 <span class="user"><a class="username" href="http://blog.csdn.net/Ellie_yang" target="_blank">Ellie_yang</a> <span class="ptime">2012-02-10 11:28发表</span>  <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#reply" class="cmt_btn reply" title="回复">[回复]</a> <span class="comment_manage" style="display:none;" commentid="2096000" username="Ellie_yang"> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#quote" class="cmt_btn quote" title="引用">[引用]</a> <a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#report" class="cmt_btn report" title="举报">[举报]</a></span></span></dt><dd class="comment_userface"><a href="http://blog.csdn.net/Ellie_yang" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/3_ellie_yang.jpg" width="40" height="40"></a></dd><dd class="comment_body">终于又有新作发表了。还是一贯得朴实风格，讲的很清楚。希望能持续看到你的大作。受益匪浅</dd></dl><div class="clear"></div></div>
+<div id="comment_bar" style="display: none; "></div>
+<div id="comment_form"><div class="guest_link">您还没有登录,请<a href="http://passport.csdn.net/account/login?from=http%3A%2F%2Fblog.csdn.net%2Flivelylittlefish%2Farticle%2Fdetails%2F7247080">[登录]</a>或<a href="http://passport.csdn.net/account/register?from=http%3A%2F%2Fblog.csdn.net%2Flivelylittlefish%2Farticle%2Fdetails%2F7247080">[注册]</a></div></div>
+<div class="announce">* 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+<script type="text/javascript">
+    var fileName = '7247080';
+    var commentscount = 5;
+    var islock = false
+</script>
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/comment.js"></script>
+<div id="ad_bot"><iframe id="ad_frm_1" frameborder="0" scrolling="no" style="border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; overflow-x: hidden; overflow-y: hidden; width: 732px; height: 170px; " src="./全局变量ngx_cycle的初始化_files/ad(2).htm"></iframe></div>
+<script type="text/javascript">
+    new Ad(5, 'ad_bot');
+</script>
+<div id="report_dialog"></div>
+
+
+<div class="clear"></div>
+</div>
+</div>
+
+<div id="side">
+    <div class="side">
+<div id="panel_Profile" class="panel">
+    <ul class="panel_head"><span>个人资料</span></ul>
+    <ul class="panel_body profile">
+        <div id="blog_userface">
+            <a href="http://my.csdn.net/livelylittlefish" target="_blank">
+            <img src="./全局变量ngx_cycle的初始化_files/1_livelylittlefish.jpg" title="访问我的空间" style="max-width:90%">
+            </a>
+            <br>
+            <span><a href="http://my.csdn.net/livelylittlefish" target="_blank">livelylittlefish</a></span>
+        </div>
+<div class="interact">
+<!--<a href="#" class="attented" title="已关注"></a>-->
+<a href="http://blog.csdn.net/livelylittlefish/article/details/7247080#" class="attent" id="span_add_follow" title="[加关注]"></a>
+<a href="http://my.csdn.net/my/letter/send/livelylittlefish" class="letter" title="[发私信]"></a>
+</div>
+        <div id="blog_medal">
+                <div class="ico_expert" title="CSDN认证专家"></div>
+        <div id="bms_box"><a href="http://medal.blog.csdn.net/allmedal.aspx" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/columnstar_s.gif" onmouseover="m_over_m(this,0)" onmouseout="m_out_m()" alt=""></a><a href="http://medal.blog.csdn.net/allmedal.aspx" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/holdon_s2.gif" onmouseover="m_over_m(this,1)" onmouseout="m_out_m()" alt=""></a></div></div>
+        <ul id="blog_rank">
+            <li>访问：<span>287623次</span></li>
+            <li>积分：<span>5528分</span></li>
+            <li>排名：<span>第505名</span></li>
+        </ul>
+        <ul id="blog_statistics">
+            <li>原创：<span>173篇</span></li>
+            <li>转载：<span>4篇</span></li>
+            <li>译文：<span>3篇</span></li>
+            <li>评论：<span>330条</span></li>
+        </ul>
+    </ul>
+</div>
+<script type="text/javascript">
+    var _blogger = 'livelylittlefish';
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var un = getUN().toLowerCase();
+        if (un == _blogger.toLowerCase()) {
+            $('.interact').hide();
+        } else if(un) {
+            var url = "http://my.csdn.net/index.php/follow/check_is_followed/" + encodeURIComponent(un) + "/" + encodeURIComponent(_blogger) + "?jsonpcallback=?";
+            $.getJSON(url, {}, function (data) {
+                if (data.succ == 1 && data.info == 1) {
+                    $('#span_add_follow').attr('class', 'attented');
+                } else {
+                    $('#span_add_follow').click(guanzhu);
+                }
+            }, 'json');
+        }
+    });
+function guanzhu() {
+    var url = "http://my.csdn.net/index.php/follow/do_follow?jsonpcallback=?";
+    $.getJSON(url, { "username": _blogger }, function (data) {
+        if (data.succ == 1) {
+            alert('关注成功！');
+            $('#span_add_follow').attr('class', 'attented').click(function () { return false; });
+        } else {
+            alert(data.msg);
+        }
+    });
+    return false;
+}
+function getUN() {
+    var m = document.cookie.match(new RegExp("(^| )UserName=([^;]*)(;|$)"));
+    if (m) return m[2];
+    else return '';
+}
+</script>
+
+<div id="custom_column_6633141" class="panel">
+    <ul class="panel_head"><span>公告</span></ul>
+    <ul class="panel_body">
+        
+<font color="#0000ff">本博客贴出的文章均为作者精心设计、思考、实践、写作而成。<br>
+<br>
+版权所有，本人对本博客内所有内容享有版权及著作权。<br>
+<br>
+本博客内任何内容仅供学习、研究使用！网络转载，请以链接形式注明出处！<br>
+<br>
+严禁用于任何商业目的，违者将保留追究法律责任的权利！</font>
+
+    </ul>
+</div><div id="custom_column_20022657" class="panel">
+    <ul class="panel_head"><span>我的微博</span></ul>
+    <ul class="panel_body">
+        <iframe width="100%" height="350" class="share_self" frameborder="0" scrolling="no" src="./全局变量ngx_cycle的初始化_files/index.htm"></iframe>
+    </ul>
+</div><div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search" target="_blank">
+        <span><input id="inputSearch" type="text" class="blogsearch" title="请输入关键字"></span>
+        <input id="btnSubmit" type="submit" value="搜索" title="search in blog">
+        <input type="hidden" name="q" id="inputQ">
+        <input type="hidden" name="t" value="blog">
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div><div id="panel_Archive" class="panel">
+    <ul class="panel_head"><span>文章存档</span></ul>
+    <ul class="panel_body">
+        <div id="archive_list"><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2012/02">2012年02月</a><span>(6)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2011/08">2011年08月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2011/07">2011年07月</a><span>(5)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2011/06">2011年06月</a><span>(12)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2011/05">2011年05月</a><span>(9)</span></li><span class="hidelist" style="display:none;"><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2011/04">2011年04月</a><span>(9)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2011/01">2011年01月</a><span>(6)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2010/12">2010年12月</a><span>(18)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2010/08">2010年08月</a><span>(2)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2010/07">2010年07月</a><span>(5)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2010/05">2010年05月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2009/12">2009年12月</a><span>(7)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2009/08">2009年08月</a><span>(11)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2009/07">2009年07月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2009/06">2009年06月</a><span>(5)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2009/04">2009年04月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2009/01">2009年01月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/12">2008年12月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/11">2008年11月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/09">2008年09月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/08">2008年08月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/07">2008年07月</a><span>(2)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/06">2008年06月</a><span>(5)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/05">2008年05月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/04">2008年04月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/03">2008年03月</a><span>(24)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2008/02">2008年02月</a><span>(26)</span></li><li><a href="http://blog.csdn.net/livelylittlefish/article/month/2005/01">2005年01月</a><span>(4)</span></li></span><div id="archive_list_button" class="list_closed">展开</div></div>
+    </ul>
+</div>
+<div id="homepageArticles" class="panel">
+    <ul class="panel_head"><span>推荐文章</span></ul>
+    <ul class="panel_body" id="ad_commend">
+    <iframe id="ad_frm_2" frameborder="0" scrolling="no" style="border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; overflow-x: hidden; overflow-y: hidden; width: 182px; height: 254px; " src="./全局变量ngx_cycle的初始化_files/ad.htm"></iframe></ul>
+</div>
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/ad.js"></script>
+<script type="text/javascript">
+    new Ad(12, 'ad_commend');
+</script><div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>博客专栏</span></ul>
+    <ul class="panel_body" id="sp_column">
+    <table cellpadding="0" cellspacing="0"><tbody><tr>
+    <td style="padding:10px 10px 0 0;">
+    <a href="http://blog.csdn.net/column/details/mathematics.html" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/20111124135059501.jpg" style="width:75px;height:75px;"></a>
+    </td>
+    <td style="padding:10px 0; vertical-align:top;">
+    <a href="http://blog.csdn.net/column/details/mathematics.html" target="_blank">砝码分盐问题</a>
+    <p>文章数：11篇</p>
+    <span>阅读量：11565</span>
+    </td>
+    </tr></tbody></table>
+    </ul>
+</div><div id="hotarticls" class="panel">
+    <ul class="panel_head"><span>阅读排行</span></ul>
+    <ul class="panel_body itemlist">
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/2186206" title="经典算法（2）——0/1背包问题（动态规划法）">经典算法（2）——0/1背包问题（动态规划法）</a><span>(19163)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/2423764" title="C#——Marshal.StructureToPtr方法简介">C#——Marshal.StructureToPtr方法简介</a><span>(10111)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/2171521" title="C++学习笔记（15）——静态绑定与动态绑定">C++学习笔记（15）——静态绑定与动态绑定</a><span>(9203)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/2186175" title="C++学习笔记（16）——动态二维数组的分配与释放">C++学习笔记（16）——动态二维数组的分配与释放</a><span>(7990)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/3854220" title="编写Makefile">编写Makefile</a><span>(7967)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/7243718" title="nginx源码分析—启动流程">nginx源码分析—启动流程</a><span>(7220)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/6571497" title="nginx源码分析—模块及其初始化">nginx源码分析—模块及其初始化</a><span>(6244)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/3411958" title="利用WScript.Shell对象隐藏cmd命令行运行">利用WScript.Shell对象隐藏cmd命令行运行</a><span>(5519)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/6696717" title="我在Salira的800天(2009.5.20~2011.7.29)-四．总结篇">我在Salira的800天(2009.5.20~2011.7.29)-四．总结篇</a><span>(5381)</span>
+        </li>
+        <li>
+            <a href="http://blog.csdn.net/livelylittlefish/article/details/5621645" title="GDB程序运行时的参数设置">GDB程序运行时的参数设置</a><span>(5100)</span>
+        </li>
+    </ul>
+</div>
+<div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/6607324#comments">nginx源码分析—队列结构ngx_queue_t</a>
+    <p style="margin:0px;">program2050:
+首先感谢作者让我们可以很清晰的学习nginx中的部分代码，通过看你的博文受益匪浅，谢谢。看完这篇ng...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/2171267#comments">C++学习笔记（10）——虚基类的作用</a>
+    <p style="margin:0px;">Coker_ye:
+说得很明白，谢谢楼主！
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/6695688#comments">我在Salira的800天(2009.5.20~2011.7.29)-二．工作篇</a>
+    <p style="margin:0px;">livelylittlefish:
+zwleagle,你好，这个问题我没有深入的研究，请原谅现在回答不了你。有空的时候倒是可以再看看代码...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/6695688#comments">我在Salira的800天(2009.5.20~2011.7.29)-二．工作篇</a>
+    <p style="margin:0px;">zwleagle:
+问个关于SAF的问题请问在opensaf中定时器是由什么驱动的，我看了代码，只看到了定时器线程中的s...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/6696702#comments">我在Salira的800天(2009.5.20~2011.7.29)-三．研究与学习篇</a>
+    <p style="margin:0px;">zwleagle:
+问个关于SAF的问题请问在opensaf中定时器是由什么驱动的，我看了代码，只看到了定时器线程中的s...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/2209537#comments">经典算法（3）——最大间隙问题（线性时间算法）</a>
+    <p style="margin:0px;">TKOM001:
+写得真不错，赞一个！！！
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/2209537#comments">经典算法（3）——最大间隙问题（线性时间算法）</a>
+    <p style="margin:0px;">livelylittlefish:
+@wukaibo1986:谢谢你的回复。关于int indexofmin(int n,T *x)in...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/2209537#comments">经典算法（3）——最大间隙问题（线性时间算法）</a>
+    <p style="margin:0px;">wukaibo1986:
+@livelylittlefish:针对楼主的代码，我做过详细测试代码处有一处错误int index...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/2209537#comments">经典算法（3）——最大间隙问题（线性时间算法）</a>
+    <p style="margin:0px;">livelylittlefish:
+@wukaibo1986:你好，你可以把程序拷贝过去试一试，以下是我在Linux机器上的结果，输入文...
+    </p>
+    </li>
+    <li>
+    <a href="http://blog.csdn.net/livelylittlefish/article/details/7308142#comments">nginx源码分析—如何发送信号</a>
+    <p style="margin:0px;">qcgrxx:
+我也想研究研究，期待新作！
+    </p>
+    </li>
+</ul>
+</div>
+<div id="panel_Category" class="panel">
+    <ul class="panel_head"><span>文章分类</span></ul>
+    <ul class="panel_body">
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/91930">C++研究</a><span>(30)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/709593">重读经典</a><span>(5)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/92113">STL研究</a><span>(2)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/769623">Boost系列</a><span>(13)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/365009">算法研究</a><span>(37)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/826830">GCC系列</a><span>(8)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/670819">GDB系列</a><span>(3)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/670815">Linux编程系列</a><span>(3)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/834923">思维题目分析</a><span>(11)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/533764">底层研究</a><span>(6)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/777530">单元测试</a><span>(10)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/838107">高性能服务器</a><span>(12)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/769232">Windows系列</a><span>(3)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/92109">基础知识</a><span>(6)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/772449">工作杂谈</a><span>(6)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/550818">网络协议</a><span>(5)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/509940">Linux管理配置</a><span>(10)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/391236">.net研究</a><span>(12)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/490429">自动构建</a><span>(4)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/91928">java研究</a><span>(1)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/670814">Linux命令系列</a><span>(1)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/411048">逆向分析</a><span>(1)</span>
+        </li>
+        <li>
+        <a href="http://blog.csdn.net/livelylittlefish/article/category/533099">API编程</a><span>(1)</span>
+        </li>
+    </ul>
+</div>    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="clear"></div>
+</div>
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/shCore-src.js"></script>
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/ZeroClipboard.js"></script>
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/article_code.js"></script>
+
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/show.js"></script>
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/showblogmedal.ashx"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script><img src="./全局变量ngx_cycle的初始化_files/pv.aspx" border="0" width="0" height="0">
+
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/publib_footer.js"></script><link rel="stylesheet" type="text/css" href="./全局变量ngx_cycle的初始化_files/pub_footer_2012.css"><div class="pub_footerall"><dl><dt></dt> <dd><a href="http://www.csdn.net/company/about.html" target="_blank">公司简介</a>|<a href="http://www.csdn.net/company/recruit.html" target="_blank">招贤纳士</a>|<a href="http://www.csdn.net/company/marketing.html" target="_blank">广告服务</a>|<a href="http://www.csdn.net/company/account.html" target="_blank">银行汇款帐号</a>|<a href="http://www.csdn.net/company/contact.html" target="_blank">联系方式</a>|<a href="http://www.csdn.net/company/statement.html" target="_blank">版权声明</a>|<a href="http://www.csdn.net/company/layer.html" target="_blank">法律顾问</a>|<a href="mailto:webmaster@csdn.net">问题报告</a></dd><dd>京&nbsp;ICP&nbsp;证&nbsp;070598&nbsp;号</dd><dd>北京创新乐知信息技术有限公司 版权所有</dd><dd><img src="./全局变量ngx_cycle的初始化_files/ico_email.gif" alt="" title=""> 联系邮箱：webmaster@csdn.net</dd><dd>Copyright © 1999-2012, CSDN.NET, All Rights Reserved&nbsp;<a href="http://www.hd315.gov.cn/beian/view.asp?bianhao=010202001032100010" target="_blank"><img src="./全局变量ngx_cycle的初始化_files/gongshang_logos.gif" alt="GongshangLogo" title=""></a></dd></dl></div>
+
+<script type="text/javascript" src="./全局变量ngx_cycle的初始化_files/counter.js"></script><script type="text/javascript" charset="UTF-8" src="./全局变量ngx_cycle的初始化_files/msg.popup.js"></script>
+
+
+
+</div>
+
+</body></html>
