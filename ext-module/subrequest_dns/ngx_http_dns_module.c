@@ -119,6 +119,7 @@ ngx_http_dns_post_read_body_handler(ngx_http_request_t *r)
     ngx_http_request_t           *sr;
     ngx_http_dns_ctx_t           *p_ctx;
     ngx_http_dns_loc_conf_t      *conf;
+    u_char                       *tmpbuf;
     conf = ngx_http_get_module_loc_conf(r, ngx_http_dns_module);
     state = NGX_HTTP_DNS_STATRT;
     bufs = r->request_body->bufs;
@@ -207,8 +208,10 @@ ngx_http_dns_post_read_body_handler(ngx_http_request_t *r)
                 ngx_http_finalize_request(r, NGX_ERROR);
                 return;
             }
-            b->pos = (u_char *) ",";
-            b->last = b->pos + sizeof(",") - 1;
+            tmpbuf = ngx_pcalloc(r->pool, 32);
+            ngx_snprintf((u_char*)tmpbuf, 32, "==%d==", i);
+            b->pos = (u_char *) tmpbuf;
+            b->last = b->pos + strlen(tmpbuf);
             b->memory = 1;
             out->buf = b;
             out->next = NULL;
