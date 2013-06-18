@@ -14,8 +14,7 @@ ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 static ngx_int_t ngx_http_mytest_handler(ngx_http_request_t *r);
 static ngx_int_t mytest_subrequest_post_handler(ngx_http_request_t *r, void *data, ngx_int_t rc);
-static void
-mytest_post_handler(ngx_http_request_t * r);
+static void mytest_post_handler(ngx_http_request_t * r);
 
 
 
