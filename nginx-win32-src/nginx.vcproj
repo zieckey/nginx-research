@@ -964,6 +964,10 @@
 					RelativePath="..\ext-module\merge_demo\ngx_http_mergedemo_module.c"
 					>
 				</File>
+				<File
+					RelativePath="..\ext-module\deep_understand_nginx_subrequest\ngx_http_mytest_module.c"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
