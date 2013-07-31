@@ -62,6 +62,75 @@ ngx_module_t ngx_http_helloworld_module =
     NGX_MODULE_V1_PADDING
 };/*}}}*/
 
+
+void* ngx_datadup( ngx_pool_t* pool, const void* srcdata, size_t len )                                               
+{/*{{{*/
+    u_char* data = (u_char*)ngx_palloc( pool, len + 1 );
+    memcpy( data, srcdata, len );
+    data[len] = 0;                                                                                                    
+    return (void*)data;
+}/*}}}*/
+
+void ngx_add_header( ngx_http_request_t *r, const char* key, size_t key_len, const char* data, size_t data_len )
+{/*{{{*/                                                                                                              
+    ngx_table_elt_t * header = (ngx_table_elt_t *)ngx_list_push(&r->headers_out.headers);                             
+    header->hash             = 1;
+    header->key.len          = key_len;
+    header->key.data         = (u_char*)ngx_datadup(r->pool, key, key_len);                                          
+    header->value.len        = data_len;                                                                              
+    header->value.data       = (u_char*)ngx_datadup(r->pool, data, data_len);                                        
+}/*}}}*/
+
+void ngx_foreach_header( ngx_http_request_t *r )
+{/*{{{*/                                                                                                              
+   // ngx_table_elt_t * header = (ngx_table_elt_t *)ngx_list_push(&);                             
+    ngx_list_part_t* part = &r->headers_out.headers.part;
+    ngx_table_elt_t* table = part->elts;
+    ngx_table_elt_t* header = NULL;
+    int i = 0;
+    for (i = 0; /* void */ ; i++) {
+
+        if (i >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+            part = part->next;
+            table = part->elts;
+            i = 0;
+        }
+
+        header = &table[i];
+        printf("find a header : key=[%s] value=[%s]\n", (char*)header->key.data, (char*)header->value.data);
+    }                                   
+}/*}}}*/
+
+ngx_uint_t ngx_fetch_httpcode( ngx_http_request_t *r )
+{/*{{{*/                                                                                                              
+    ngx_list_part_t* part = &r->headers_out.headers.part;
+    ngx_table_elt_t* table = part->elts;
+    ngx_table_elt_t* header = NULL;
+    int i = 0;
+    for (i = 0; /* void */ ; i++) {
+
+        if (i >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+            part = part->next;
+            table = part->elts;
+            i = 0;
+        }
+
+        header = &table[i];
+        printf("find a header : key=[%s] value=[%s]\n", (char*)header->key.data, (char*)header->value.data);
+        if (strncmp("httpcode", header->key.data, header->key.len) == 0)
+        {
+            return atoi((char*)header->value.data);
+        }
+    }
+    return NGX_HTTP_OK;
+}/*}}}*/
+
 /**
 * Process the client request.
 * The client post data has stored in <code>r</code>
@@ -71,7 +140,10 @@ static void helloworld_process_handler(ngx_http_request_t *r)
     ngx_int_t rc = NGX_OK;
     ngx_buf_t *b = NULL;
     ngx_chain_t out;
-
+    const char* key = "httpcode";
+    const char* value = "201";
+    const char* key1 = "httpcode2";
+    const char* value1 = "302xx";
 
     ngx_http_helloworld_conf_t *conf = NULL;
     conf = (ngx_http_helloworld_conf_t *)ngx_http_get_module_loc_conf(r,ngx_http_helloworld_module);
@@ -91,9 +163,19 @@ static void helloworld_process_handler(ngx_http_request_t *r)
     out.buf = b;
     out.next = NULL;
 
+
+    ngx_add_header(r, key, strlen(key), value, strlen(value));
+    ngx_add_header(r, key1, strlen(key1), value1, strlen(value1));
+    ngx_foreach_header(r);
+
     b->last = ngx_sprintf(b->pos, "local conf index=[%d] loc_conf_create_count=[%d] ngx_http_helloworld_set_count=[%d] text=[%s]", conf->index, loc_conf_create_count, ngx_http_helloworld_set_count, conf->buf);
 
+#if 1
     r->headers_out.status = NGX_HTTP_OK;
+#else
+    //test set http code
+    r->headers_out.status = ngx_fetch_httpcode(r);
+#endif
     r->headers_out.content_length_n = b->last - b->pos;
     r->headers_out.content_type.len = sizeof("text/plain") - 1;
     r->headers_out.content_type.data = (u_char *) "text/plain";
