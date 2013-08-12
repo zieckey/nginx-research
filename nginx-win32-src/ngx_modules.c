@@ -52,6 +52,7 @@ extern ngx_module_t  ngx_http_range_body_filter_module;
 extern ngx_module_t  ngx_http_not_modified_filter_module;
 
 
+extern ngx_module_t  ngx_http_research_module;
 extern ngx_module_t  ngx_http_helloworld_module;
 extern ngx_module_t  ngx_http_mergedemo_module;
 extern ngx_module_t  ngx_http_dns_module;
