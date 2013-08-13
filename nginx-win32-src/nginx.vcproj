@@ -957,7 +957,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ext-module\hello_world\ngx_http_hello_world.c"
+					RelativePath="..\ext-module\hello_world\ngx_http_helloworld_module.c"
 					>
 				</File>
 				<File
