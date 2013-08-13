@@ -56,7 +56,7 @@ extern ngx_module_t  ngx_http_research_module;
 extern ngx_module_t  ngx_http_helloworld_module;
 extern ngx_module_t  ngx_http_mergedemo_module;
 extern ngx_module_t  ngx_http_dns_module;
-extern ngx_module_t  ngx_http_mytest_module;
+extern ngx_module_t  ngx_http_subrequest_test_module;
 
 ngx_module_t *ngx_modules[] = {
     &ngx_core_module,
@@ -72,10 +72,11 @@ ngx_module_t *ngx_modules[] = {
     &ngx_http_log_module,
     &ngx_http_upstream_module,
 //    &ngx_http_static_module,
+    &ngx_http_research_module,
     &ngx_http_helloworld_module,
     &ngx_http_mergedemo_module,
     &ngx_http_dns_module,
-    &ngx_http_mytest_module,
+    &ngx_http_subrequest_test_module,
     &ngx_http_autoindex_module,
     &ngx_http_index_module,
     &ngx_http_auth_basic_module,
