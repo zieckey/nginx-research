@@ -17,3 +17,6 @@ nginx-win32-src/logs/
 nginx-win32-src/nginx.ncb
 nginx-win32-src/nginx.vcproj.CORP.weizili.user
 nginx-win32-src/nginx.suo
+ext-module/deep_understand_nginx_subrequest/nginx
+ext-module/dns_subrequest/nginx
+ext-module/hello_world/nginx
