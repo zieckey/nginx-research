@@ -146,7 +146,7 @@ ngx_http_helloworld_create_conf(ngx_conf_t *cf)
         return NGX_CONF_ERROR;
     }
 
-    conf->buf = "Hello NGINX.";
+    conf->buf = "Hello NGINX";
     conf->buflen  = strlen(conf->buf);
 
     return conf;
