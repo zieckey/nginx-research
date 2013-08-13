@@ -1,7 +1,7 @@
 
 
 MODULE_DIR=$(shell pwd)
-NGINXHOME=$(MODULE_DIR)/../../../opensource/nginx-1.0.15
+NGINXHOME=$(MODULE_DIR)/../../nginx-1.0.15
 NGINX_BINARY=$(NGINXHOME)/objs/nginx
 NGINX_MAKEFILE=$(NGINXHOME)/Makefile
 NGINX_BIN_INSTALL=$(NGINXHOME)/nginx

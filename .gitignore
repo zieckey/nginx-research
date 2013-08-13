@@ -20,3 +20,6 @@ nginx-win32-src/nginx.suo
 ext-module/deep_understand_nginx_subrequest/nginx
 ext-module/dns_subrequest/nginx
 ext-module/hello_world/nginx
+nginx-1.0.15/Makefile
+nginx-1.0.15/nginx/
+nginx-1.0.15/objs/
