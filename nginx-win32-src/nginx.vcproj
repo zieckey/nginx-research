@@ -965,11 +965,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ext-module\deep_understand_nginx_subrequest\ngx_http_mytest_module.c"
+					RelativePath="..\ext-module\research\ngx_http_research_module.c"
 					>
 				</File>
 				<File
-					RelativePath="..\ext-module\research\ngx_http_research_module.c"
+					RelativePath="..\ext-module\deep_understand_nginx_subrequest\ngx_http_subrequest_test_module.c"
 					>
 				</File>
 			</Filter>

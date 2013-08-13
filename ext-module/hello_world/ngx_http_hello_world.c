@@ -86,7 +86,7 @@ static void helloworld_process_handler(ngx_http_request_t *r)
     out.buf = b;
     out.next = NULL;
 
-    b->last = ngx_sprintf(b->pos, "text=[%s]", conf->buf);
+    b->last = ngx_sprintf(b->pos, "%s", conf->buf);
 
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = b->last - b->pos;
