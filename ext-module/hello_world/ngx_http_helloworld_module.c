@@ -15,7 +15,7 @@ static char *ngx_http_helloworld_set(ngx_conf_t *cf, ngx_command_t *cmd, void*co
 static void *ngx_http_helloworld_create_conf(ngx_conf_t *cf);
 
 static ngx_command_t ngx_http_helloworld_commands[] =
-{/*{{{*/
+{
     { ngx_string("helloworld_query"), //The command name, it MUST BE the same as nginx.conf location block's command
 
     NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
@@ -25,10 +25,10 @@ static ngx_command_t ngx_http_helloworld_commands[] =
     NULL },
 
     ngx_null_command
-};/*}}}*/
+};
 
 static ngx_http_module_t ngx_http_helloworld_module_ctx =
-{/*{{{*/
+{
     NULL, /* preconfiguration */
     NULL, /* postconfiguration */
 
@@ -39,11 +39,11 @@ static ngx_http_module_t ngx_http_helloworld_module_ctx =
     NULL, /* merge server configuration */
 
     ngx_http_helloworld_create_conf, /* create location configuration */
-    NULL /* merge location configuration */
-};/*}}}*/
+    NULL  /* merge location configuration */
+};
 
 ngx_module_t ngx_http_helloworld_module =
-{/*{{{*/
+{
     NGX_MODULE_V1,
     &ngx_http_helloworld_module_ctx, /* module context */
     ngx_http_helloworld_commands, /* module directives */
@@ -56,30 +56,28 @@ ngx_module_t ngx_http_helloworld_module =
     NULL, /* exit process */
     NULL, /* exit master */
     NGX_MODULE_V1_PADDING
-};/*}}}*/
+};
 
 /**
-* Process the client request.
-* The client post data has stored in <code>r</code>
-*/
+ * Process the client request.
+ * The client post data has stored in <code>r</code>
+ */
 static void helloworld_process_handler(ngx_http_request_t *r)
-{/*{{{*/
+{
     ngx_int_t rc = NGX_OK;
     ngx_buf_t *b = NULL;
     ngx_chain_t out;
 
     ngx_http_helloworld_conf_t *conf = NULL;
     conf = (ngx_http_helloworld_conf_t *)ngx_http_get_module_loc_conf(r,ngx_http_helloworld_module);
-    if (conf == NULL)
-    {
+    if (conf == NULL) {
         ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
         return ;
     }
 
     /* Prepare for output, 128 is preserved for robust */
     b = ngx_create_temp_buf( r->pool, 128 + conf->buflen );
-    if (b == NULL)
-    {
+    if (b == NULL) {
         ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
         return ;
     }
@@ -97,23 +95,22 @@ static void helloworld_process_handler(ngx_http_request_t *r)
 
     rc = ngx_http_send_header(r);
 
-    if (rc == NGX_ERROR || rc > NGX_OK || r->header_only)
-    {
+    if (rc == NGX_ERROR || rc > NGX_OK || r->header_only) {
         ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
         return ;
     }
 
     ngx_http_output_filter(r, &out);
     ngx_http_finalize_request(r, 0);
-}/*}}}*/
+}
 
 /**
-* Reading data handler
-* After read all the data from client we set a process handler
-*/
+ * Reading data handler
+ * After read all the data from client we set a process handler
+ */
 static ngx_int_t
 ngx_http_helloworld_handler(ngx_http_request_t *r)
-{/*{{{*/
+{
     ngx_int_t rc = NGX_DONE;
     rc = ngx_http_read_client_request_body( r, helloworld_process_handler );
     if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
@@ -121,27 +118,27 @@ ngx_http_helloworld_handler(ngx_http_request_t *r)
     }
 
     return NGX_DONE;
-}/*}}}*/
+}
 
 
 /**
-* set the request reading data handler
-*/
+ * set the request reading data handler
+ */
 static char *
 ngx_http_helloworld_set( ngx_conf_t *cf, ngx_command_t *cmd, void *conf )
-{/*{{{*/
+{
     ngx_http_core_loc_conf_t *clcf;
 
     clcf = (ngx_http_core_loc_conf_t *)ngx_http_conf_get_module_loc_conf(cf,ngx_http_core_module);
     clcf->handler = ngx_http_helloworld_handler;
 
     return NGX_CONF_OK;
-}/*}}}*/
+}
 
 
 static void *
 ngx_http_helloworld_create_conf(ngx_conf_t *cf)
-{/*{{{*/
+{
     ngx_http_helloworld_conf_t *conf = NULL;
 
     conf = (ngx_http_helloworld_conf_t *)ngx_pcalloc(cf->pool,sizeof(ngx_http_helloworld_conf_t));
@@ -153,6 +150,6 @@ ngx_http_helloworld_create_conf(ngx_conf_t *cf)
     conf->buflen  = strlen(conf->buf);
 
     return conf;
-}/*}}}*/
+}
 
 
