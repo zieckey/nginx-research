@@ -12,13 +12,13 @@ typedef struct {
 
 static char *ngx_http_helloworld_set(ngx_conf_t *cf, ngx_command_t *cmd, void*conf);
 
-static void *ngx_http_helloworld_create_conf(ngx_conf_t *cf);
+static void *ngx_http_helloworld_create_loc_conf(ngx_conf_t *cf);
 
 static ngx_command_t ngx_http_helloworld_commands[] =
 {
     { ngx_string("helloworld_query"), //The command name, it MUST BE the same as nginx.conf location block's command
 
-    NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
+    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
     ngx_http_helloworld_set,
     0,
     0,
@@ -38,7 +38,7 @@ static ngx_http_module_t ngx_http_helloworld_module_ctx =
     NULL, /* create server configuration */
     NULL, /* merge server configuration */
 
-    ngx_http_helloworld_create_conf, /* create location configuration */
+    ngx_http_helloworld_create_loc_conf, /* create location configuration */
     NULL  /* merge location configuration */
 };
 
@@ -123,8 +123,7 @@ static void helloworld_process_handler(ngx_http_request_t *r)
  * Reading data handler
  * After read all the data from client we set a process handler
  */
-static ngx_int_t
-ngx_http_helloworld_handler(ngx_http_request_t *r)
+static ngx_int_t ngx_http_helloworld_handler(ngx_http_request_t *r)
 {
     ngx_int_t rc = NGX_DONE;
     rc = ngx_http_read_client_request_body( r, helloworld_process_handler );
@@ -139,8 +138,7 @@ ngx_http_helloworld_handler(ngx_http_request_t *r)
 /**
  * set the request reading data handler
  */
-static char *
-ngx_http_helloworld_set( ngx_conf_t *cf, ngx_command_t *cmd, void *conf )
+static char * ngx_http_helloworld_set( ngx_conf_t *cf, ngx_command_t *cmd, void *conf )
 {
     ngx_http_core_loc_conf_t *clcf;
 
@@ -151,8 +149,7 @@ ngx_http_helloworld_set( ngx_conf_t *cf, ngx_command_t *cmd, void *conf )
 }
 
 
-static void *
-ngx_http_helloworld_create_conf(ngx_conf_t *cf)
+static void * ngx_http_helloworld_create_loc_conf(ngx_conf_t *cf)
 {
     ngx_http_helloworld_conf_t *conf = NULL;
     const char* timebuff = getlocaltime(cf->pool);
