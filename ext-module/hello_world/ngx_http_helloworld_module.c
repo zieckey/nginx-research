@@ -58,6 +58,21 @@ ngx_module_t ngx_http_helloworld_module =
     NGX_MODULE_V1_PADDING
 };
 
+static const char* getlocaltime(ngx_pool_t* pool)
+{
+    size_t buff_len = 32;
+    char* buff = ngx_pcalloc(pool, buff_len);
+    struct tm *pTime;
+    time_t ctTime;
+    time( &ctTime );
+    pTime = localtime( &ctTime );
+
+    snprintf( buff, buff_len, "%4d-%.2d-%.2d %.2d:%.2d:%.2d",
+                pTime->tm_year + 1900, pTime->tm_mon + 1, pTime->tm_mday,
+                pTime->tm_hour, pTime->tm_min, pTime->tm_sec);
+    return buff;
+}
+
 /**
  * Process the client request.
  * The client post data has stored in <code>r</code>
@@ -84,7 +99,7 @@ static void helloworld_process_handler(ngx_http_request_t *r)
     out.buf = b;
     out.next = NULL;
 
-    b->last = ngx_sprintf(b->pos, "%s", conf->buf);
+    b->last = ngx_sprintf(b->pos, "%s\ncurrent: %s\n", conf->buf, getlocaltime(r->pool));
 
     r->headers_out.status = NGX_HTTP_OK;
     r->headers_out.content_length_n = b->last - b->pos;
@@ -140,13 +155,15 @@ static void *
 ngx_http_helloworld_create_conf(ngx_conf_t *cf)
 {
     ngx_http_helloworld_conf_t *conf = NULL;
+    const char* timebuff = getlocaltime(cf->pool);
 
     conf = (ngx_http_helloworld_conf_t *)ngx_pcalloc(cf->pool,sizeof(ngx_http_helloworld_conf_t));
     if (conf == NULL) {
         return NGX_CONF_ERROR;
     }
 
-    conf->buf = "Hello NGINX";
+    conf->buf = ngx_pcalloc(cf->pool, 128);
+    snprintf(conf->buf, 128, "startup: %s", timebuff);
     conf->buflen  = strlen(conf->buf);
 
     return conf;
