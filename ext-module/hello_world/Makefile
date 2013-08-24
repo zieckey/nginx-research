@@ -31,7 +31,7 @@ all : $(NGINX_MAKEFILE) $(NGINX_BINARY)
 	cp $(NGINX_BINARY) .
 
 $(NGINX_MAKEFILE) : config  
-	cd $(NGINXHOME); ./configure --prefix=$(NGINX_BIN_INSTALL) --add-module=$(MODULE_DIR) --with-debug
+	cd $(NGINXHOME); ./configure --prefix=$(NGINX_BIN_INSTALL) --add-module=$(MODULE_DIR) --with-debug --conf-path=$(MODULE_DIR)/conf/nginx.conf
 
 $(NGINX_BINARY) : ngx_http_helloworld_module.c 
 	$(MAKE) CFLAGS=" -pipe -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g" -j -C $(NGINXHOME)
