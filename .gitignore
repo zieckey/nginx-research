@@ -23,3 +23,17 @@ ext-module/hello_world/nginx
 nginx-1.0.15/Makefile
 nginx-1.0.15/nginx/
 nginx-1.0.15/objs/
+ext-module/hello_world/conf/fastcgi.conf
+ext-module/hello_world/conf/fastcgi.conf.default
+ext-module/hello_world/conf/fastcgi_params
+ext-module/hello_world/conf/fastcgi_params.default
+ext-module/hello_world/conf/koi-utf
+ext-module/hello_world/conf/koi-win
+ext-module/hello_world/conf/mime.types
+ext-module/hello_world/conf/mime.types.default
+ext-module/hello_world/conf/nginx.conf.default
+ext-module/hello_world/conf/scgi_params
+ext-module/hello_world/conf/scgi_params.default
+ext-module/hello_world/conf/uwsgi_params
+ext-module/hello_world/conf/uwsgi_params.default
+ext-module/hello_world/conf/win-utf

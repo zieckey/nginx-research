@@ -1,3 +1,3 @@
 #! /bin/sh
 
-./nginx -c `pwd`/nginx.conf
+./nginx -c `pwd`/conf/nginx.conf
