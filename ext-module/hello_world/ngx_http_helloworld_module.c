@@ -152,15 +152,14 @@ static char * ngx_http_helloworld_set( ngx_conf_t *cf, ngx_command_t *cmd, void 
 static void * ngx_http_helloworld_create_loc_conf(ngx_conf_t *cf)
 {
     ngx_http_helloworld_conf_t *conf = NULL;
-    const char* timebuff = getlocaltime(cf->pool);
 
-    conf = (ngx_http_helloworld_conf_t *)ngx_pcalloc(cf->pool,sizeof(ngx_http_helloworld_conf_t));
+    conf = (ngx_http_helloworld_conf_t *)ngx_pcalloc(cf->pool, sizeof(ngx_http_helloworld_conf_t));
     if (conf == NULL) {
         return NGX_CONF_ERROR;
     }
 
     conf->buf = ngx_pcalloc(cf->pool, 128);
-    snprintf(conf->buf, 128, "startup: %s", timebuff);
+    snprintf(conf->buf, 128, "startup: %s", getlocaltime(cf->pool));
     conf->buflen  = strlen(conf->buf);
 
     return conf;
