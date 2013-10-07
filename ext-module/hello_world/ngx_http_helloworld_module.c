@@ -7,7 +7,8 @@
 
 typedef struct {
     char*         buf;
-    size_t        buflen;//the length of the buf
+    size_t        len;//the length of the buf
+    size_t        capacity;//the capacity of the buf
 } ngx_http_helloworld_conf_t;
 
 static char *ngx_http_helloworld_set(ngx_conf_t *cf, ngx_command_t *cmd, void*conf);
@@ -18,7 +19,7 @@ static ngx_command_t ngx_http_helloworld_commands[] =
 {
     { ngx_string("helloworld_query"), //The command name, it MUST BE the same as nginx.conf location block's command
 
-    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,
+    NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS|NGX_CONF_TAKE1,
     ngx_http_helloworld_set,
     0,
     0,
@@ -91,7 +92,7 @@ static void helloworld_process_handler(ngx_http_request_t *r)
     }
 
     /* Prepare for output, 128 is preserved for robust */
-    b = ngx_create_temp_buf( r->pool, 128 + conf->buflen );
+    b = ngx_create_temp_buf( r->pool, 128 + conf->len );
     if (b == NULL) {
         ngx_http_finalize_request(r, NGX_HTTP_INTERNAL_SERVER_ERROR);
         return ;
@@ -145,6 +146,20 @@ static char * ngx_http_helloworld_set( ngx_conf_t *cf, ngx_command_t *cmd, void 
     clcf = (ngx_http_core_loc_conf_t *)ngx_http_conf_get_module_loc_conf(cf,ngx_http_core_module);
     clcf->handler = ngx_http_helloworld_handler;
 
+    ngx_http_helloworld_conf_t * lconf = ( ngx_http_helloworld_conf_t *)ngx_http_conf_get_module_loc_conf( cf, ngx_http_helloworld_module );
+    ngx_str_t* argv = (ngx_str_t*)cf->args->elts;
+    size_t argc = cf->args->nelts;
+
+    printf("argc=%lu argv[0]=%s "
+           "lconf->buf=[%s] lconf->len=%lu lconf->capacity=%lu\n", 
+           argc, (char*)argv[0].data,
+           lconf->buf, lconf->len, lconf->capacity);
+
+    if (argc > 1) {
+        printf("argc=%lu argv[0]=[%s] argv[1]=[%s]\n",
+                argc, (char*)argv[0].data, (char*)argv[1].data);
+    }
+
     return NGX_CONF_OK;
 }
 
@@ -158,9 +173,10 @@ static void * ngx_http_helloworld_create_loc_conf(ngx_conf_t *cf)
         return NGX_CONF_ERROR;
     }
 
-    conf->buf = ngx_pcalloc(cf->pool, 128);
-    snprintf(conf->buf, 128, "startup: %s", getlocaltime(cf->pool));
-    conf->buflen  = strlen(conf->buf);
+    conf->capacity = 256;
+    conf->buf = ngx_pcalloc(cf->pool, conf->capacity);
+    snprintf(conf->buf, conf->capacity, "startup: %s", getlocaltime(cf->pool));
+    conf->len = strlen(conf->buf);
 
     return conf;
 }
