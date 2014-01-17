@@ -58,6 +58,10 @@ ngx_module_t ngx_http_helloworld_module =
     NGX_MODULE_V1_PADDING
 };
 
+#ifdef WIN32
+#define snprintf _snprintf
+#endif
+
 static const char* getlocaltime(ngx_pool_t* pool)
 {
     size_t buff_len = 32;
