@@ -955,6 +955,13 @@
 				<File
 					RelativePath="..\ext-module\dns_subrequest\ngx_http_dns_module.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\ext-module\hello_world\ngx_http_helloworld_module.c"
@@ -963,14 +970,35 @@
 				<File
 					RelativePath="..\ext-module\merge_demo\ngx_http_mergedemo_module.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\ext-module\research\ngx_http_research_module.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\ext-module\deep_understand_nginx_subrequest\ngx_http_subrequest_test_module.c"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>
