@@ -146,14 +146,16 @@ static ngx_int_t ngx_http_helloworld_handler(ngx_http_request_t *r)
 static char * ngx_http_helloworld_set( ngx_conf_t *cf, ngx_command_t *cmd, void *conf )
 {
     ngx_http_core_loc_conf_t *clcf;
+    ngx_http_helloworld_conf_t * lconf;
+    ngx_str_t* argv;
+    size_t argc;
 
     clcf = (ngx_http_core_loc_conf_t *)ngx_http_conf_get_module_loc_conf(cf,ngx_http_core_module);
     clcf->handler = ngx_http_helloworld_handler;
 
-    ngx_http_helloworld_conf_t * lconf = 
-        ngx_http_conf_get_module_loc_conf( cf, ngx_http_helloworld_module );
-    ngx_str_t* argv = (ngx_str_t*)cf->args->elts;
-    size_t argc = cf->args->nelts;
+    lconf = ngx_http_conf_get_module_loc_conf( cf, ngx_http_helloworld_module );
+    argv = (ngx_str_t*)cf->args->elts;
+    argc = cf->args->nelts;
 
     printf("argc=%lu argv[0]=%s "
            "lconf->buf=[%s] lconf->len=%lu lconf->capacity=%lu\n", 
