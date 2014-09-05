@@ -244,6 +244,8 @@ ngx_http_subrequest_test_handler(ngx_http_request_t * r)
     ngx_snprintf(sub_location.data, sub_location.len,
         "%V%V", &sub_prefix, &r->args);
 
+    printf("sub_location=%s\n", (const char*)sub_location.data);
+
     //sr就是子请求
     //调用ngx_http_subrequest创建子请求，它只会返回NGX_OK
     //或者NGX_ERROR。返回NGX_OK时，sr就已经是合法的子请求。注意，这里
