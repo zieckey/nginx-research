@@ -209,7 +209,7 @@ ngx_http_dns_post_read_body_handler(ngx_http_request_t *r)
                 return;
             }
             tmpbuf = ngx_pcalloc(r->pool, 32);
-            ngx_snprintf((u_char*)tmpbuf, 32, "==%d==", i);
+            ngx_snprintf((u_char*)tmpbuf, 32, "===%d===", i+1);
             b->pos = (u_char *) tmpbuf;
             b->last = b->pos + ngx_strlen(tmpbuf);
             b->memory = 1;
