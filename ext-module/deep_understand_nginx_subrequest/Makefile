@@ -3,7 +3,7 @@
 MODULE_DIR=$(shell pwd)
 NGINX_BINARY=$(NGINXHOME)/objs/nginx
 NGINX_MAKEFILE=$(NGINXHOME)/Makefile
-NGINXHOME=$(MODULE_DIR)/../../../opensource/nginx-1.0.15
+NGINXHOME=$(MODULE_DIR)/../../nginx-1.0.15
 NGINX_BIN_INSTALL=$(NGINXHOME)/nginx
 
 
@@ -30,10 +30,13 @@ CXX=g++
 all : $(NGINX_MAKEFILE) $(NGINX_BINARY)
 	cp $(NGINX_BINARY) .
 
+start : $(NGINX_BINARY)
+	./nginx -c `pwd`/nginx.conf 
+
 $(NGINX_MAKEFILE) : config  
 	cd $(NGINXHOME); ./configure --prefix=$(NGINX_BIN_INSTALL) --add-module=$(MODULE_DIR) --with-debug
 
-$(NGINX_BINARY) : ngx_http_mytest_module.c 
+$(NGINX_BINARY) : ngx_http_subrequest_test_module.c 
 	$(MAKE) CFLAGS=" -pipe -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g" -j -C $(NGINXHOME)
 	$(MAKE) install -C $(NGINXHOME)
 
