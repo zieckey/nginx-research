@@ -38,7 +38,6 @@ static ngx_http_module_t ngx_http_dns_module_ctx = {
     NULL,      
     NULL,      
     ngx_http_dns_create_loc_conf,
-               
     ngx_http_dns_merge_loc_conf,
                
 };
