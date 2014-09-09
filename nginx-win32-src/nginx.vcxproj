@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\ext-module\access_filter\ngx_http_token_filter_module.c" />
     <ClCompile Include="ngx_modules.c" />
     <ClCompile Include="core\nginx.c" />
     <ClCompile Include="core\ngx_array.c" />

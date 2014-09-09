@@ -57,6 +57,7 @@ extern ngx_module_t  ngx_http_helloworld_module;
 extern ngx_module_t  ngx_http_mergedemo_module;
 extern ngx_module_t  ngx_http_dns_module;
 extern ngx_module_t  ngx_http_subrequest_test_module;
+extern ngx_module_t  ngx_http_token_filter_module;
 
 ngx_module_t *ngx_modules[] = {
     &ngx_core_module,
@@ -81,6 +82,7 @@ ngx_module_t *ngx_modules[] = {
     &ngx_http_index_module,
     &ngx_http_auth_basic_module,
     &ngx_http_access_module,
+    &ngx_http_token_filter_module,
     &ngx_http_limit_zone_module,
     &ngx_http_limit_req_module,
     &ngx_http_geo_module,
