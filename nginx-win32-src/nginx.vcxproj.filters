@@ -515,7 +515,7 @@
     <ClCompile Include="pcre-8.12\pcreposix.c">
       <Filter>pcre</Filter>
     </ClCompile>
-    <ClCompile Include="..\ext-module\access_filter\ngx_http_token_filter_module.c">
+    <ClCompile Include="..\ext-module\token_filter\ngx_http_token_filter_module.c">
       <Filter>http\ext_modules</Filter>
     </ClCompile>
   </ItemGroup>
