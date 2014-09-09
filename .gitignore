@@ -12,6 +12,12 @@
 *.la
 *.a
 
+nginx-win32-src/Backup/
+nginx-win32-src/UpgradeLog.htm
+nginx-win32-src/nginx.opensdf
+nginx-win32-src/nginx.sdf
+
+
 nginx-win32-src/Debug/
 nginx-win32-src/logs/
 nginx-win32-src/nginx.ncb
