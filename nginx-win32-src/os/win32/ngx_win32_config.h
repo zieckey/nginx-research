@@ -7,10 +7,10 @@
 #ifndef _NGX_WIN32_CONFIG_H_INCLUDED_
 #define _NGX_WIN32_CONFIG_H_INCLUDED_
 
-
+#ifndef WIN32
 #define WIN32         0x0400
 #define _WIN32_WINNT  0x0500
-
+#endif
 
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
