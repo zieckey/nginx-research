@@ -68,3 +68,10 @@ nginx-win32-src/UpgradeLog.htm
 nginx-win32-src/nginx.opensdf
 nginx-win32-src/nginx.sdf
 
+nginx-1.7.4-win32/3rdparty/openssl-1.0.1h/tmp32dll/
+nginx-1.7.4-win32/3rdparty/pcre-8.32/vc12/Debug/
+nginx-1.7.4-win32/3rdparty/zlib-1.2.8/vc12/Debug/
+nginx-1.7.4-win32/vc12.bak/
+nginx-1.7.4-win32/vc12/Debug/
+nginx-win32-src/nginx.v12.suo
+
