@@ -481,7 +481,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\conf\nginx.conf">
+    <None Include="conf\nginx.conf">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

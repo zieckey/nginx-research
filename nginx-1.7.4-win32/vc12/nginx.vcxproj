@@ -272,7 +272,7 @@
     <ClInclude Include="..\src\core\nginx.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\conf\nginx.conf" />
+    <None Include="conf\nginx.conf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

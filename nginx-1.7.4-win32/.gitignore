@@ -1,0 +1,4 @@
+vc12/logs/access.log
+vc12/logs/error.log
+vc12/logs/nginx.pid
+
