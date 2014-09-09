@@ -275,7 +275,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalOptions>/DOPENSSL_NO_STATIC_ENGINE /DOPENSSL_NO_RSAX /DOPENSSL_NO_RDRAND %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/DOPENSSL_NO_STATIC_ENGINE /DOPENSSL_NO_RSAX /DOPENSSL_NO_RDRAND /FS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

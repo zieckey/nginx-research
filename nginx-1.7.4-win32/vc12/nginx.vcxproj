@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>PCRE_STATIC;NGX_HTTP_X_FORWARDED_FOR;HAVE_CONFIG_H;NO_SYS_TYPES_H;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/I../include %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/I../include /FS %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>../src;../src/core;../src/os/win32;../src/event;../src/event/modules;../src/http;../src/http/modules;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
