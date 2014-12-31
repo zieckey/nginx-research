@@ -18,7 +18,7 @@ CFLAGS = -pipe -O -W -Wall -Wpointer-arith \
 		 -I $(NGINX_SRC_PATH)/os/unix \
 		 -I $(NGINX_SRC_PATH)/os/event \
 
-LDFLAGS = -L .. -lnginx -lpcre -lcrypto -lz
+LDFLAGS = -L .. -lnginx -lpcre -lcrypto -lcrypt -lz -lpthread
 
 TARGET=$(shell basename `pwd`)
 

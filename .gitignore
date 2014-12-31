@@ -54,3 +54,6 @@ nginx-1.7.9.tar.gz
 nginx-1.7.9/Makefile
 nginx-1.7.9/objs/
 libnginx/nginx-1.7.9
+
+libnginx/base64/base64
+libnginx/basic_types_string/basic_types_string
