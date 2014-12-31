@@ -518,6 +518,9 @@
     <ClCompile Include="..\ext-module\token_filter\ngx_http_token_filter_module.c">
       <Filter>http\ext_modules</Filter>
     </ClCompile>
+    <ClCompile Include="..\ext-module\http_get_filter\ngx_http_get_filter_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ngx_auto_config.h">
