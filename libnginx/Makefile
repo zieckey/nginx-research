@@ -1,11 +1,11 @@
 
 include build.mk
 
-NGINX_ROOT = ../nginx-$(NGINX_VERSION)
+NGINX_ROOT = nginx-$(NGINX_VERSION)
 
 NGINX_MAKEFILE = $(NGINX_ROOT)/Makefile
 
-LDFLAGS = -lpthread -lcrypt -lpcre -lcrypto -lcrypto -lz
+LDFLAGS = -lpthread -lpcre -lcrypto -lz
 
 NGINX_OBJS = \
 			 $(NGINX_ROOT)/objs/src/core/nginx.o \
@@ -134,7 +134,8 @@ libnginx.so :
 	cc -static -o $@ $(LDFLAGS) $(NGINX_OBJS)
 
 $(NGINX_MAKEFILE) : 
-	tar zxvf $(NGINX_ROOT).tar.gz -C ..
+	wget http://nginx.org/download/nginx-$(NGINX_VERSION).tar.gz
+	tar zxvf $(NGINX_ROOT).tar.gz 
 	sed -i "s|-Werror|-Werror -fPIC|g" $(NGINX_ROOT)/auto/cc/gcc               #Add -fPIC
 	sed -i "s|main(int argc|__xmain(int argc|g" $(NGINX_ROOT)/src/core/nginx.c #Rename main --> __xmain
 	cd $(NGINX_ROOT); ./configure ; (make||echo)

@@ -53,3 +53,4 @@ ext-module/lottery.bak/
 nginx-1.7.9.tar.gz
 nginx-1.7.9/Makefile
 nginx-1.7.9/objs/
+libnginx/nginx-1.7.9

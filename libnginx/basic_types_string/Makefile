@@ -1,7 +1,7 @@
 
 include ../build.mk
 
-$(TARGET) : $(OBJS)
+$(TARGET) : $(OBJS) ../libnginx.a
 	gcc -o $@ $^ $(LDFLAGS) 
 
 
