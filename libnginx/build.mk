@@ -6,8 +6,8 @@ ARFLAGS=cru
 SRCS := $(wildcard *.c)
 OBJS := $(patsubst %.c, %.o, $(SRCS))
 
-NGINX_OBJS_PATH =../../nginx-1.0.15/objs
-NGINX_SRC_PATH  =../../nginx-1.0.15/src
+NGINX_OBJS_PATH =../../nginx-1.7.9/objs
+NGINX_SRC_PATH  =../../nginx-1.7.9/src
 CFLAGS = -pipe -O -W -Wall -Wpointer-arith \
 		 -Wunused-value -Wno-unused-parameter -Wunused-function -Wunused-variable \
 		 -fPIC\
