@@ -24,7 +24,7 @@ int main()
     ngx_keyval_t pair = {ngx_string("url"), ngx_string("http://rainx.cn/index.php?test=1")};
     int dst_len = ngx_base64_encoded_length(mystr.len);
     printf("source length is %lu, destination length is %d\n", mystr.len, dst_len );
-    p = malloc( gx_base64_encoded_length(mystr.len) + 1);
+    p = malloc(ngx_base64_encoded_length(mystr.len) + 1);
     dst.data = p;
     ngx_encode_base64(&dst, &mystr);
     printf("source str is %s\ndestination str is %s\n", mystr.data, dst.data);

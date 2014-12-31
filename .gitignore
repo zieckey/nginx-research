@@ -44,3 +44,12 @@ ext-module/hello_world/conf/scgi_params.default
 ext-module/hello_world/conf/uwsgi_params
 ext-module/hello_world/conf/uwsgi_params.default
 ext-module/hello_world/conf/win-utf
+
+### auto script modified 
+nginx-1.7.9/auto/cc/gcc
+nginx-1.7.9/src/core/nginx.c
+
+ext-module/lottery.bak/
+nginx-1.7.9.tar.gz
+nginx-1.7.9/Makefile
+nginx-1.7.9/objs/
