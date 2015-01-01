@@ -3,8 +3,8 @@ CC=gcc
 CXX=g++
 AR=ar
 ARFLAGS=cru
-SRCS := $(wildcard *.c)
-OBJS := $(patsubst %.c, %.o, $(SRCS))
+SRCS := $(wildcard *.cc)
+OBJS := $(patsubst %.cc, %.o, $(SRCS))
 
 NGINX_VERSION = 1.7.9
 NGINX_OBJS_PATH = ../nginx-$(NGINX_VERSION)/objs
@@ -18,11 +18,13 @@ CFLAGS = -pipe -O -W -Wall -Wpointer-arith \
 		 -I $(NGINX_SRC_PATH)/os/unix \
 		 -I $(NGINX_SRC_PATH)/os/event \
 
-LDFLAGS = -L .. -lnginx -lpcre -lcrypto -lcrypt -lz -lpthread
+LDFLAGS = -L .. -lnginx -lpcre -lcrypto -lcrypt -lz -lpthread -lgtest -lgtest_main
 
 TARGET=$(shell basename `pwd`)
 
 %.o : %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
+%.o : %.cc
+	$(CXX) -c $(CFLAGS) $< -o $@
 

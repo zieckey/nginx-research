@@ -1,12 +1,29 @@
 
-include build.mk
+CC=gcc
+CXX=g++
+AR=ar
+ARFLAGS=cru
+
+
+NGINX_VERSION = 1.7.9
+NGINX_OBJS_PATH = nginx-$(NGINX_VERSION)/objs
+NGINX_SRC_PATH  = nginx-$(NGINX_VERSION)/src
+CFLAGS = -pipe -O -W -Wall -Wpointer-arith \
+		 -Wunused-value -Wno-unused-parameter -Wunused-function -Wunused-variable \
+		 -fPIC\
+		 -I $(NGINX_OBJS_PATH) \
+		 -I $(NGINX_SRC_PATH)/core \
+		 -I $(NGINX_SRC_PATH)/os \
+		 -I $(NGINX_SRC_PATH)/os/unix \
+		 -I $(NGINX_SRC_PATH)/os/event \
+
+NGINX_LDFLAGS = -lpcre -lcrypto -lcrypt -lz -lpthread
+LDFLAGS = -L . -lnginx $(NGINX_LDFLAGS) -lgtest -lgtest_main
 
 NGINX_ROOT = nginx-$(NGINX_VERSION)
 
 NGINX_MAKEFILE = $(NGINX_ROOT)/Makefile
 NGINX_TAR = $(NGINX_ROOT).tar.gz
-
-LDFLAGS = -lpthread -lpcre -lcrypto -lz
 
 NGINX_OBJS = \
 			 $(NGINX_ROOT)/objs/src/core/nginx.o \
@@ -121,18 +138,28 @@ NGINX_OBJS = \
 			 $(NGINX_ROOT)/objs/src/http/modules/ngx_http_upstream_keepalive_module.o \
 			 $(NGINX_ROOT)/objs/ngx_modules.o 
 
-LIBNGINX = libnginx.a
+SRCS := $(wildcard *.cc)
+OBJS := $(patsubst %.cc, %.o, $(SRCS))
+DEPS := $(patsubst %.o, %.d, $(OBJS))
 
-SUBDIR = 
 
-all : $(LIBNGINX)
+LIBNGINX_STATIC  = libnginx.a
+TARGET = researchnginx
 
-$(LIBNGINX) : $(NGINX_MAKEFILE)
+all : $(LIBNGINX_STATIC) $(TARGET)
+
+check : $(TARGET)
+	./$^
+
+$(TARGET) : $(OBJS) $(LIBNGINX_STATIC)
+	$(CXX) -o $@ $(OBJS) $(LDFLAGS) 
+
+$(LIBNGINX_STATIC) : $(NGINX_MAKEFILE)
 	$(AR) $(ARFLAGS) $@ $(NGINX_OBJS) 
 	ranlib $@
 
-libnginx.so :
-	cc -static -o $@ $(LDFLAGS) $(NGINX_OBJS)
+$(LIBNGINX_DYNAMIC) : $(NGINX_MAKEFILE)
+	cc -static -o $@ $(NGINX_LDFLAGS) $(NGINX_OBJS)
 
 $(NGINX_TAR) :
 	wget http://nginx.org/download/nginx-$(NGINX_VERSION).tar.gz
@@ -144,5 +171,18 @@ $(NGINX_MAKEFILE) : $(NGINX_TAR)
 	cd $(NGINX_ROOT); ./configure ; (make||echo)
 
 clean :
+	rm -rf *.so *.a *.o $(TARGET)
+
+distclean :
+	$(MAKE) clean
 	rm -rf $(NGINX_ROOT)
-	rm -rf $(LIBNGINX) *.so *.a
+	rm -rf $(LIBNGINX_STATIC)
+
+%.o : %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+%.o : %.cc
+	$(CXX) -c $(CFLAGS) $< -o $@
+
+-include $(DEPS)
+
