@@ -128,11 +128,17 @@ typedef int                 intptr_t;
 typedef u_int               uintptr_t;
 
 typedef int                 ssize_t;
-typedef __int64             off_t;
 typedef uint32_t            in_addr_t;
 typedef u_short             in_port_t;
 typedef int                 sig_atomic_t;
 
+#ifdef NGINX_RESEARCH_WORK_WITH_GTEST
+// A workaround when working with GTEST framework
+#undef off_t
+#define off_t long
+#else
+typedef __int64             off_t;
+#endif
 
 #define NGX_PTR_SIZE            4
 #define NGX_SIZE_T_LEN          sizeof("-2147483648") - 1

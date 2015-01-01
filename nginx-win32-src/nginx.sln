@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nginx", "nginx.vcxproj", "{73619EC2-C314-4087-8EFC-7B4B588F4861}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nginxresearch", "nginxresearch.vcxproj", "{D4FAED7A-2E73-467C-8A65-30D6D498F91A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,6 +17,10 @@ Global
 		{73619EC2-C314-4087-8EFC-7B4B588F4861}.Debug|Win32.Build.0 = Debug|Win32
 		{73619EC2-C314-4087-8EFC-7B4B588F4861}.Release|Win32.ActiveCfg = Release|Win32
 		{73619EC2-C314-4087-8EFC-7B4B588F4861}.Release|Win32.Build.0 = Release|Win32
+		{D4FAED7A-2E73-467C-8A65-30D6D498F91A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D4FAED7A-2E73-467C-8A65-30D6D498F91A}.Debug|Win32.Build.0 = Debug|Win32
+		{D4FAED7A-2E73-467C-8A65-30D6D498F91A}.Release|Win32.ActiveCfg = Release|Win32
+		{D4FAED7A-2E73-467C-8A65-30D6D498F91A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

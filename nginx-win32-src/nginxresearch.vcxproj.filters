@@ -1,0 +1,813 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{39943c7d-c1a3-4e31-a8aa-922589c5f94d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="event">
+      <UniqueIdentifier>{d9cceab7-57cb-41b1-85cc-4fab551c0c01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="event\modules">
+      <UniqueIdentifier>{a0454934-fd92-4d76-bade-64c7e6ec1f0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="os">
+      <UniqueIdentifier>{b0c79d35-4aed-4a13-b416-488b07b8e82b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="os\win32">
+      <UniqueIdentifier>{71a80d5b-1e54-4788-8235-53254371bb00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="http">
+      <UniqueIdentifier>{4ba8df75-6c27-4498-bf0c-6f85ea47686f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="http\modules">
+      <UniqueIdentifier>{d46ac48f-ecf4-496e-9af8-749e2ed5a24d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="http\ext_modules">
+      <UniqueIdentifier>{b6583e43-dc91-4b96-93f1-93dd7659bdbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="zlib">
+      <UniqueIdentifier>{4e917983-8c39-4894-841c-11ef5cdf19cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pcre">
+      <UniqueIdentifier>{315d04a3-1606-4f75-ba0f-a0a2440f9412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gtest">
+      <UniqueIdentifier>{21395699-b3a7-4799-b8f5-ad71ed59be83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="research">
+      <UniqueIdentifier>{c994e950-5de9-45f5-95e1-4163d6282a0b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ngx_modules.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_array.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_buf.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_conf_file.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_connection.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_cpuinfo.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_crc32.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_crypt.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_cycle.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_file.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_hash.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_inet.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_list.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_log.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_md5.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_murmurhash.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_open_file_cache.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_output_chain.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_palloc.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_parse.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_queue.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_radix_tree.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_rbtree.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_regex.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_resolver.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_shmtx.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_slab.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_spinlock.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_string.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\ngx_times.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_accept.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_acceptex.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_busy_lock.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_connect.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_mutex.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_pipe.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_posted.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_timer.c">
+      <Filter>event</Filter>
+    </ClCompile>
+    <ClCompile Include="event\ngx_event_openssl.c">
+      <Filter>event\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="event\modules\ngx_iocp_module.c">
+      <Filter>event\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="event\modules\ngx_win32_select_module.c">
+      <Filter>event\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_alloc.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_errno.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_event_log.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_files.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_process.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_process_cycle.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_shmem.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_socket.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_stat.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_thread.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_time.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_udp_wsarecv.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_user.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_win32_init.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_wsarecv.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_wsarecv_chain.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_wsasend.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="os\win32\ngx_wsasend_chain.c">
+      <Filter>os\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_busy_lock.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_copy_filter_module.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_core_module.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_file_cache.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_header_filter_module.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_parse.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_parse_time.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_postpone_filter_module.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_request.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_request_body.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_script.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_special_response.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_upstream.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_upstream_round_robin.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_variables.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\ngx_http_write_filter_module.c">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_access_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_addition_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_auth_basic_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_autoindex_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_browser_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_charset_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_chunked_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_degradation_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_empty_gif_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_fastcgi_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_flv_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_geo_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_gzip_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_gzip_static_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_headers_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_index_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_limit_req_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_limit_zone_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_log_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_map_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_memcached_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_not_modified_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_proxy_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_random_index_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_range_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_referer_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_rewrite_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_scgi_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_secure_link_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_split_clients_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_ssi_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_ssl_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_sub_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_upstream_ip_hash_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_userid_filter_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="http\modules\ngx_http_uwsgi_module.c">
+      <Filter>http\modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\dns_subrequest\ngx_http_dns_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\hello_world\ngx_http_helloworld_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\merge_demo\ngx_http_mergedemo_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\research\ngx_http_research_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\deep_understand_nginx_subrequest\ngx_http_subrequest_test_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\adler32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\compress.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\crc32.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\deflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzclose.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzlib.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzread.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\gzwrite.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\infback.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inffast.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inflate.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\inftrees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\trees.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\uncompr.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="zlib\zutil.c">
+      <Filter>zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_chartables.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_compile.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_config.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_dfa_exec.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_exec.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_fullinfo.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_get.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_globals.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_info.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_maketables.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_newline.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_ord2utf8.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_refcount.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_scanner.cc">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_stringpiece.cc">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_study.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_tables.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_try_flipped.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_ucd.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_valid_utf8.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_version.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcre_xclass.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcrecpp.cc">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre-8.12\pcreposix.c">
+      <Filter>pcre</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\token_filter\ngx_http_token_filter_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\http_get_filter\ngx_http_get_filter_module.c">
+      <Filter>http\ext_modules</Filter>
+    </ClCompile>
+    <ClCompile Include="gtest-1.7.0\fused-src\gtest\gtest-all.cc">
+      <Filter>gtest</Filter>
+    </ClCompile>
+    <ClCompile Include="core\nginx_win_main.cc">
+      <Filter>research</Filter>
+    </ClCompile>
+    <ClCompile Include="core\nginx_win_research.c">
+      <Filter>research</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libnginx\base64.cc">
+      <Filter>research</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ngx_auto_config.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="ngx_auto_headers.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="core\nginx.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_array.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_buf.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_conf_file.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_config.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_connection.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_crc.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_crc32.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_crypt.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_cycle.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_file.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_hash.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_inet.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_list.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_log.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_md5.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_murmurhash.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_open_file_cache.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_palloc.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_parse.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_queue.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_radix_tree.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_rbtree.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_regex.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_resolver.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_sha1.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_shmtx.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_slab.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_string.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\ngx_times.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="event\ngx_event.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="event\ngx_event_busy_lock.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="event\ngx_event_pipe.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="event\ngx_event_posted.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="event\ngx_event_timer.h">
+      <Filter>event</Filter>
+    </ClInclude>
+    <ClInclude Include="event\modules\ngx_iocp_module.h">
+      <Filter>event\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_alloc.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_atomic.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_errno.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_files.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_os.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_process.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_process_cycle.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_shmem.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_socket.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_thread.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_time.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_user.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="os\win32\ngx_win32_config.h">
+      <Filter>os\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_busy_lock.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_cache.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_config.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_core_module.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_request.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_script.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_upstream.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_upstream_round_robin.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\ngx_http_variables.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="http\modules\ngx_http_ssi_filter_module.h">
+      <Filter>http\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="http\modules\ngx_http_ssl_module.h">
+      <Filter>http\modules</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\crc32.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\deflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\gzguts.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffast.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inffixed.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inflate.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\inftrees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\trees.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zconf.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zlib.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib\zutil.h">
+      <Filter>zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\config.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcre.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcre_internal.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcre_scanner.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcre_stringpiece.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcrecpp.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcrecpp_internal.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcrecpparg.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\pcreposix.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="pcre-8.12\ucp.h">
+      <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libnginx\allinc.h">
+      <Filter>research</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="os\win32\nginx.ico">
+      <Filter>os\win32</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="os\win32\nginx.rc">
+      <Filter>os\win32</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="conf\nginx.conf" />
+  </ItemGroup>
+</Project>
