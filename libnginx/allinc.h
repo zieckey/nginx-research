@@ -12,7 +12,7 @@ extern "C" {
     #include "ngx_string.h"
     #include "ngx_string.h"
 
-    // The global memory pool used in unit test case
+    // The global memory pool used in all of the unit test cases
     // It is defined in ngx_pool.cc
     extern ngx_pool_t* g_pool;
 

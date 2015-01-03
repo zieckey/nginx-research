@@ -539,6 +539,9 @@
     <ClCompile Include="..\libnginx\ngx_pool.cc">
       <Filter>research</Filter>
     </ClCompile>
+    <ClCompile Include="..\libnginx\ngx_array_t.cc">
+      <Filter>research</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ngx_auto_config.h">

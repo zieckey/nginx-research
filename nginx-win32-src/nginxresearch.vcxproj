@@ -99,6 +99,7 @@
     <ClCompile Include="..\libnginx\base64.cc">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
     </ClCompile>
+    <ClCompile Include="..\libnginx\ngx_array_t.cc" />
     <ClCompile Include="..\libnginx\ngx_pool.cc" />
     <ClCompile Include="core\nginx_win_main.cc" />
     <ClCompile Include="core\nginx_win_research.c" />

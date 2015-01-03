@@ -1,7 +1,8 @@
-#include <stdio.h>
-
 #include "allinc.h"
 
+/*
+ * 关于ngx_str_t更多解释请参考：http://tengine.taobao.org/book/chapter_02.html#ngx-str-t-100
+ */
 TEST_UNIT(base64) {
     ngx_str_t enc;
     ngx_str_t dec;
