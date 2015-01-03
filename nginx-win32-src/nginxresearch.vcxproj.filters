@@ -533,13 +533,16 @@
     <ClCompile Include="core\nginx_win_research.c">
       <Filter>research</Filter>
     </ClCompile>
-    <ClCompile Include="..\libnginx\base64.cc">
-      <Filter>research</Filter>
-    </ClCompile>
     <ClCompile Include="..\libnginx\ngx_pool.cc">
       <Filter>research</Filter>
     </ClCompile>
-    <ClCompile Include="..\libnginx\ngx_array_t.cc">
+    <ClCompile Include="..\libnginx\ngx_hash.cc">
+      <Filter>research</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libnginx\ngx_array.cc">
+      <Filter>research</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libnginx\base64.cc">
       <Filter>research</Filter>
     </ClCompile>
   </ItemGroup>

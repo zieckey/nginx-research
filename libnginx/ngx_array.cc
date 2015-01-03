@@ -9,7 +9,7 @@ struct User {
 /*
 * 
 */
-TEST_UNIT(ngx_array_t) {
+TEST_UNIT(ngx_array) {
     ngx_array_t* a = ngx_array_create(g_pool, 10, sizeof(User));
 
     H_TEST_ASSERT(a->nalloc == 10);
@@ -46,7 +46,7 @@ TEST_UNIT(ngx_array_t) {
     // Traversal the array
     for (ngx_uint_t i = 0; i < a->nelts; ++i) {
         u = (User*)((char*)a->elts + sizeof(User)*i);
-        H_TEST_ASSERT(u->id == i);
+        H_TEST_ASSERT(u->id == (int)i);
         printf("id=%d name=[%s] url=[%s]\n", u->id, (char*)u->name.data, (char*)u->url.data);
     }
 }
