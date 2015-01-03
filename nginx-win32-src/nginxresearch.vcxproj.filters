@@ -536,13 +536,13 @@
     <ClCompile Include="..\libnginx\ngx_pool.cc">
       <Filter>research</Filter>
     </ClCompile>
-    <ClCompile Include="..\libnginx\ngx_hash.cc">
-      <Filter>research</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libnginx\ngx_array.cc">
-      <Filter>research</Filter>
-    </ClCompile>
     <ClCompile Include="..\libnginx\base64.cc">
+      <Filter>research</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libnginx\research_ngx_array.cc">
+      <Filter>research</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libnginx\research_ngx_hash.cc">
       <Filter>research</Filter>
     </ClCompile>
   </ItemGroup>
@@ -803,6 +803,9 @@
       <Filter>pcre</Filter>
     </ClInclude>
     <ClInclude Include="..\libnginx\allinc.h">
+      <Filter>research</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libnginx\dump_nginx_struct.h">
       <Filter>research</Filter>
     </ClInclude>
   </ItemGroup>

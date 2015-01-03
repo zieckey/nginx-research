@@ -49,4 +49,6 @@ TEST_UNIT(ngx_array) {
         H_TEST_ASSERT(u->id == (int)i);
         printf("id=%d name=[%s] url=[%s]\n", u->id, (char*)u->name.data, (char*)u->url.data);
     }
+
+    ngx_array_destroy(a);
 }
