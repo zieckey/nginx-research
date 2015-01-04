@@ -1,7 +1,7 @@
 #include "allinc.h"
 
 namespace {
-    struct User {
+    struct ListElement {
         ngx_str_t name;
         int id;
     };
@@ -12,12 +12,12 @@ namespace {
 TEST_UNIT(ngx_list)
 {
     ngx_uint_t nalloc = 4;
-    ngx_list_t *list = ngx_list_create(g_pool, nalloc, sizeof(User));
+    ngx_list_t *list = ngx_list_create(g_pool, nalloc, sizeof(ListElement));
 
     // insert element to the list
     for (size_t i = 0; i < H_ARRAYSIZE(names); i++)
     {
-        User* u = (User*)ngx_list_push(list);
+        ListElement* u = (ListElement*)ngx_list_push(list);
         u->id = i;
         u->name.data = (u_char*)names[i];
         u->name.len = strlen(names[i]);
@@ -34,7 +34,7 @@ TEST_UNIT(ngx_list)
     {
         for (ngx_uint_t n = 0; n < part->nelts; ++n)
         {
-            User* u = (User*)(part->elts) + n;
+            ListElement* u = (ListElement*)(part->elts) + n;
             //printf("id=%d name=%s\n", u->id, (char*)u->name.data);
             H_TEST_ASSERT(strncmp((char*)u->name.data, names[count++], u->name.len) == 0);
         }

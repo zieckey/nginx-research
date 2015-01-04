@@ -2,8 +2,7 @@
 
 #include "allinc.h"
 
-
-void dump_pool(ngx_pool_t* pool)
+inline void dump_pool(ngx_pool_t* pool)
 {
     while (pool)
     {
