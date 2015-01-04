@@ -8,9 +8,9 @@ ARFLAGS=cru
 NGINX_VERSION = 1.7.9
 NGINX_OBJS_PATH = nginx-$(NGINX_VERSION)/objs
 NGINX_SRC_PATH  = nginx-$(NGINX_VERSION)/src
-CFLAGS = -pipe -O -W -Wall -Wpointer-arith \
+CFLAGS = -pipe -g -W -Wall -Wpointer-arith \
 		 -Wunused-value -Wno-unused-parameter -Wunused-function -Wunused-variable \
-		 -fPIC\
+		 -fPIC -MMD\
 		 -I $(NGINX_OBJS_PATH) \
 		 -I $(NGINX_SRC_PATH)/core \
 		 -I $(NGINX_SRC_PATH)/os \
@@ -178,11 +178,12 @@ distclean :
 	rm -rf $(NGINX_ROOT)
 	rm -rf $(LIBNGINX_STATIC)
 
+-include $(DEPS)
+
 %.o : %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 %.o : %.cc
 	$(CXX) -c $(CFLAGS) $< -o $@
 
--include $(DEPS)
 

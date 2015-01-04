@@ -218,9 +218,9 @@ void dump_hash_array(ngx_array_t* a)
     for (; ptr < (ngx_hash_key_t*)((char*)a->elts + a->nalloc * a->size); ptr++)
     {
         printf("    0x%p: {key = (\"%s\"%s, %d), key_hash = %-10d, value = \"%s\"%s}\n",
-            ptr,
-            (char*)ptr->key.data,
-            prefix,
+            ptr, 
+            (char*)ptr->key.data, 
+            prefix, 
             (int)ptr->key.len,
             (unsigned int)ptr->key_hash, (char*)ptr->value, prefix);
     }
