@@ -1,10 +1,15 @@
 #include "allinc.h"
 
-struct User {
-    ngx_str_t name;
-    ngx_str_t url;
-    int id;
-};
+namespace {
+
+    struct User {
+        ngx_str_t name;
+        ngx_str_t url;
+        int id;
+    };
+
+}
+
 
 /*
 * 

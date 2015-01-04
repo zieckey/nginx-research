@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "allinc.h"
 
 ngx_pool_t* g_pool;
