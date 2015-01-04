@@ -12,15 +12,15 @@ namespace {
 /*
 * 
 */
-TEST_UNIT(ngx_array) {
-    ngx_array_t* a = ngx_array_create(g_pool, 10, sizeof(ArrayElement));
+TEST_UNIT_P(ngx_array) {
+    ngx_array_t* a = ngx_array_create(pool, 10, sizeof(ArrayElement));
 
     H_TEST_ASSERT(a->nalloc == 10);
     H_TEST_ASSERT(a->size == sizeof(ArrayElement));
 
     // Add one element to the array
     ArrayElement* u = (ArrayElement*)ngx_array_push(a);
-    u->name.data = (u_char*)ngx_pcalloc(g_pool, 32);
+    u->name.data = (u_char*)ngx_pcalloc(pool, 32);
     strcpy((char*)u->name.data, "CodeG");
     u->name.len = strlen("CodeG");
     ngx_str_set(&u->url, "http://blog.codeg.cn/2015/01/03/ngx_array_t");
@@ -30,7 +30,7 @@ TEST_UNIT(ngx_array) {
 
     // Add another one element to the array
     u = (ArrayElement*)ngx_array_push(a);
-    u->name.data = (u_char*)ngx_pcalloc(g_pool, 32);
+    u->name.data = (u_char*)ngx_pcalloc(pool, 32);
     strcpy((char*)u->name.data, "zieckey");
     u->name.len = strlen("zieckey");
     ngx_str_set(&u->url, "http://blog.codeg.cn/2014/12/13/Hello-CodeG");
@@ -39,7 +39,7 @@ TEST_UNIT(ngx_array) {
 
     // Add 3rd element to the array
     u = (ArrayElement*)ngx_array_push(a);
-    u->name.data = (u_char*)ngx_pcalloc(g_pool, 32);
+    u->name.data = (u_char*)ngx_pcalloc(pool, 32);
     strcpy((char*)u->name.data, "zieckey");
     u->name.len = strlen("zieckey");
     ngx_str_set(&u->url, "https://github.com/zieckey");

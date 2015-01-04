@@ -105,6 +105,7 @@
     </ClCompile>
     <ClCompile Include="..\libnginx\ngx_pool.cc" />
     <ClCompile Include="..\libnginx\research_ngx_list.cc" />
+    <ClCompile Include="..\libnginx\research_ngx_queue.cc" />
     <ClCompile Include="core\nginx_win_main.cc" />
     <ClCompile Include="core\nginx_win_research.c" />
     <ClCompile Include="gtest-1.7.0\fused-src\gtest\gtest-all.cc" />
@@ -272,6 +273,7 @@
   <ItemGroup>
     <ClInclude Include="..\libnginx\allinc.h" />
     <ClInclude Include="..\libnginx\dump_nginx_struct.h" />
+    <ClInclude Include="..\libnginx\test_common.h" />
     <ClInclude Include="ngx_auto_config.h" />
     <ClInclude Include="ngx_auto_headers.h" />
     <ClInclude Include="core\nginx.h" />

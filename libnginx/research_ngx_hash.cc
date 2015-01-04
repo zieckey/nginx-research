@@ -11,10 +11,9 @@ static ngx_str_t names[] = {
 static const char* descs[] = { "zieckey's id is 0", "codeg's id is 1", "jane's id is 2" };
 
 // hash table的一些基本操作
-TEST_UNIT(ngx_hash)
+TEST_UNIT_P(ngx_hash)
 {
     ngx_uint_t          k;
-    ngx_pool_t*         pool = g_pool;
     ngx_hash_init_t     hash_init;
     ngx_array_t*        elements;
     ngx_hash_key_t*     arr_node;
@@ -110,16 +109,15 @@ void dump_hash(ngx_hash_t *hash, ngx_array_t *array);
 ngx_array_t* add_urls_to_array(ngx_pool_t *pool);
 void find_test(ngx_hash_t *hash, ngx_str_t addr[], int num, bool expect_found);
 
-TEST_UNIT(ngx_hash_by_abo)
+TEST_UNIT_P(ngx_hash_by_abo)
 {
-    ngx_pool_t *pool = NULL;
+    //ngx_pool_t *pool = NULL;
     ngx_array_t *array = NULL; // store elements of type ngx_hash_key_t
     ngx_hash_t *hash;
 
     printf("--------------------------------\n");
     printf("create a new pool:\n");
     printf("--------------------------------\n");
-    pool = ngx_create_pool(1024, NULL);
 
     dump_pool(pool);
 
@@ -164,7 +162,6 @@ TEST_UNIT(ngx_hash_by_abo)
 ExitHandler:
     //release
     ngx_array_destroy(array);
-    ngx_destroy_pool(pool);
 }
 
 ngx_hash_t* init_hash(ngx_pool_t *pool, ngx_array_t *array)

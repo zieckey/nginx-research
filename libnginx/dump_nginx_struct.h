@@ -1,7 +1,5 @@
 #pragma once
 
-#include "allinc.h"
-
 inline void dump_pool(ngx_pool_t* pool)
 {
     while (pool)

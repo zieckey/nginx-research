@@ -9,10 +9,10 @@ namespace {
     static const char* names[] = { "codeg", "jane", "zieckey", "codeg4", "codeg5", "codeg6", "codeg7", "codeg8", "codeg9", "codeg10" };
 }
 
-TEST_UNIT(ngx_list)
+TEST_UNIT_P(ngx_list)
 {
     ngx_uint_t nalloc = 4;
-    ngx_list_t *list = ngx_list_create(g_pool, nalloc, sizeof(ListElement));
+    ngx_list_t *list = ngx_list_create(pool, nalloc, sizeof(ListElement));
 
     // insert element to the list
     for (size_t i = 0; i < H_ARRAYSIZE(names); i++)
