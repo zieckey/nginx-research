@@ -8,7 +8,7 @@ static ngx_str_t names[] = {
     ngx_string("codeg"),
     ngx_string("jane") };
 
-static char* descs[] = { "zieckey's id is 0", "codeg's id is 1", "jane's id is 2" };
+static const char* descs[] = { "zieckey's id is 0", "codeg's id is 1", "jane's id is 2" };
 
 // hash table的一些基本操作
 TEST_UNIT(ngx_hash)
@@ -19,7 +19,7 @@ TEST_UNIT(ngx_hash)
     ngx_array_t*        elements;
     ngx_hash_key_t*     arr_node;
     char*               find;
-    int                 i;
+    size_t              i;
 
     ngx_cacheline_size = NGX_CPU_CACHE_LINE;
 
@@ -27,7 +27,7 @@ TEST_UNIT(ngx_hash)
     hash_init.key = &ngx_hash_key_lc;          // hash算法函数
     hash_init.max_size = 1024;                   // max_size
     hash_init.bucket_size = 64; // ngx_align(64, ngx_cacheline_size);
-    hash_init.name = "codeg_hash";          // 在log里会用到
+    hash_init.name = (char*)"codeg_hash";          // 在log里会用到
     hash_init.pool = pool;                 // 内存池
     hash_init.temp_pool = NULL;
 
@@ -38,16 +38,16 @@ TEST_UNIT(ngx_hash)
         arr_node->key = (names[i]);
         arr_node->key_hash = ngx_hash_key_lc(arr_node->key.data, arr_node->key.len);
         arr_node->value = (void*)descs[i];
-        printf("key: %s , key_hash: %u\n", arr_node->key.data, arr_node->key_hash);
+        printf("key: %s , key_hash: %u\n", arr_node->key.data, (unsigned int)arr_node->key_hash);
     }
 
     H_TEST_ASSERT(ngx_hash_init(&hash_init, (ngx_hash_key_t*)elements->elts, elements->nelts) == NGX_OK);
 
     // 查找
     k = ngx_hash_key_lc(names[0].data, names[0].len);
-    printf("%s key is %u\n", names[0].data, k);
+    printf("%s key is %u\n", names[0].data, (unsigned int)k);
     find = (char*)ngx_hash_find(hash_init.hash, k, (u_char*)names[0].data, names[0].len);
-    H_TEST_ASSERT(find);
+    H_TEST_ASSERT(find != NULL);
     if (find) {
         printf("get desc of %s : %s\n", (char*)names[0].data, (char*)find);
     }
@@ -63,7 +63,7 @@ TEST_UNIT(ngx_hash)
 // test code is copied from http://blog.csdn.net/livelylittlefish/article/details/6636229
 
 #define Max_Size 1024
-#define Bucket_Size 32  //256, 64, 32
+#define Bucket_Size 64  //256, 64, 32
 
 #define NGX_HASH_ELT_SIZE(name)               \
     (sizeof(void *)+ngx_align((name)->key.len + 2, sizeof(void *)))
@@ -79,7 +79,7 @@ static ngx_str_t urls[] = {
     ngx_string("www.abo321.org")  //117.40.196.26
 };
 
-static char* values[] = {
+static const char* values[] = {
     "220.181.111.147",
     "58.63.236.35",
     "74.125.71.105",
@@ -187,7 +187,7 @@ ngx_hash_t* init_hash(ngx_pool_t *pool, ngx_array_t *array)
     hinit.key = &ngx_hash_key_lc;  //hash function
     hinit.max_size = Max_Size;
     hinit.bucket_size = Bucket_Size;
-    hinit.name = "my_hash_sample";
+    hinit.name = (char*)"my_hash_sample";
     hinit.pool = pool;  //the hash table exists in the memory pool
     hinit.temp_pool = NULL;
 
@@ -206,20 +206,23 @@ void dump_hash_array(ngx_array_t* a)
     if (a == NULL)
         return;
 
-    printf("array = 0x%x\n", a);
-    printf("  .elts = 0x%x\n", a->elts);
-    printf("  .nelts = %d\n", a->nelts);
-    printf("  .size = %d\n", a->size);
-    printf("  .nalloc = %d\n", a->nalloc);
-    printf("  .pool = 0x%x\n", a->pool);
+    printf("array = 0x%p\n", a);
+    printf("  .elts = 0x%p\n", a->elts);
+    printf("  .nelts = %d\n", (int)a->nelts);
+    printf("  .size = %d\n", (int)a->size);
+    printf("  .nalloc = %d\n", (int)a->nalloc);
+    printf("  .pool = 0x%p\n", a->pool);
 
     printf("  elements:\n");
     ngx_hash_key_t *ptr = (ngx_hash_key_t*)(a->elts);
     for (; ptr < (ngx_hash_key_t*)((char*)a->elts + a->nalloc * a->size); ptr++)
     {
-        printf("    0x%x: {key = (\"%s\"%.*s, %d), key_hash = %-10ld, value = \"%s\"%.*s}\n",
-            ptr, ptr->key.data, Max_Url_Len - ptr->key.len, prefix, ptr->key.len,
-            ptr->key_hash, ptr->value, Max_Ip_Len - strlen((char*)ptr->value), prefix);
+        printf("    0x%p: {key = (\"%s\"%s, %d), key_hash = %-10d, value = \"%s\"%s}\n",
+            ptr,
+            (char*)ptr->key.data,
+            prefix,
+            (int)ptr->key.len,
+            (unsigned int)ptr->key_hash, (char*)ptr->value, prefix);
     }
     printf("\n");
 }
@@ -230,7 +233,7 @@ void dump_hash_array(ngx_array_t* a)
 void dump_hash(ngx_hash_t *hash, ngx_array_t *array)
 {
     int loop;
-    char prefix[] = "          ";
+    //char prefix[] = "          ";
     u_short test[512] = { 0 };
     ngx_uint_t key;
     ngx_hash_key_t* elts;
@@ -239,12 +242,12 @@ void dump_hash(ngx_hash_t *hash, ngx_array_t *array)
     if (hash == NULL)
         return;
 
-    printf("hash = 0x%x: **buckets = 0x%x, size = %d\n", hash, hash->buckets, hash->size);
+    printf("hash = 0x%p: **buckets = 0x%p, size = %d\n", hash, hash->buckets, (int)hash->size);
 
     for (loop = 0; loop < (int)hash->size; loop++)
     {
         ngx_hash_elt_t *elt = hash->buckets[loop];
-        printf("  0x%x: buckets[%d] = 0x%x\n", &(hash->buckets[loop]), loop, elt);
+        printf("  0x%p: buckets[%d] = 0x%p\n", &(hash->buckets[loop]), loop, elt);
     }
     printf("\n");
 
@@ -259,9 +262,9 @@ void dump_hash(ngx_hash_t *hash, ngx_array_t *array)
         ngx_hash_elt_t *elt = (ngx_hash_elt_t *)((u_char *)hash->buckets[key] + test[key]);
 
         ngx_strlow((u_char*)url, elt->name, elt->len);
-        printf("  buckets %d: 0x%x: {value = \"%s\"%.*s, len = %d, name = \"%s\"%.*s}\n",
-            key, elt, (char*)elt->value, Max_Ip_Len - strlen((char*)elt->value), prefix,
-            elt->len, url, Max_Url_Len - elt->len, prefix); //replace elt->name with url
+        printf("  buckets %d: 0x%p: {value = \"%s\", len = %u, name = \"%s\"}\n",
+            (unsigned int)key, elt, (char*)elt->value,
+            elt->len, url); //replace elt->name with url
 
         test[key] = (u_short)(test[key] + NGX_HASH_ELT_SIZE(&elts[loop]));
     }
@@ -269,8 +272,8 @@ void dump_hash(ngx_hash_t *hash, ngx_array_t *array)
 
 ngx_array_t* add_urls_to_array(ngx_pool_t *pool)
 {
-    int loop;
-    char prefix[] = "          ";
+    size_t loop;
+    //char prefix[] = "          ";
     ngx_array_t *a = ngx_array_create(pool, Max_Num, sizeof(ngx_hash_key_t));
 
     for (loop = 0; loop < Max_Num; loop++)
@@ -293,7 +296,7 @@ void find_test(ngx_hash_t *hash, ngx_str_t addr[], int num, bool expect_found)
 {
     ngx_uint_t key;
     int loop;
-    char prefix[] = "          ";
+    //char prefix[] = "          ";
 
     for (loop = 0; loop < num; loop++)
     {
@@ -309,13 +312,14 @@ void find_test(ngx_hash_t *hash, ngx_str_t addr[], int num, bool expect_found)
 
         if (value)
         {
-            printf("(url = \"%s\"%.*s, key = %-10u) found, (ip = \"%s\")\n",
-                addr[loop].data, Max_Url_Len - addr[loop].len, prefix, key, (char*)value);
+            printf("(url = \"%s\", key = %-10u) found, (ip = \"%s\")\n",
+                (char*)addr[loop].data, (unsigned int)key, (char*)value);
         }
         else
         {
-            printf("(url = \"%s\"%.*s, key = %-10u) not found!\n",
-                addr[loop].data, Max_Url_Len - addr[loop].len, prefix, key);
+            printf("(url = \"%s\", key = %-10u) not found!\n",
+                (char*)addr[loop].data, (unsigned int)key);
         }
     }
 }
+
