@@ -545,6 +545,9 @@
     <ClCompile Include="..\libnginx\research_ngx_hash.cc">
       <Filter>research</Filter>
     </ClCompile>
+    <ClCompile Include="..\libnginx\research_ngx_list.cc">
+      <Filter>research</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ngx_auto_config.h">
