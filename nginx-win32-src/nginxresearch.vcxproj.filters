@@ -45,6 +45,9 @@
     <Filter Include="research">
       <UniqueIdentifier>{c994e950-5de9-45f5-95e1-4163d6282a0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="research\pool">
+      <UniqueIdentifier>{c36528a2-d7e8-4d60-acba-5e935313de55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ngx_modules.c">
@@ -551,6 +554,12 @@
     <ClCompile Include="..\libnginx\research_ngx_queue.cc">
       <Filter>research</Filter>
     </ClCompile>
+    <ClCompile Include="..\libnginx\pool\cg_pool.cc">
+      <Filter>research\pool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libnginx\cg_pool_test.cc">
+      <Filter>research</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ngx_auto_config.h">
@@ -816,6 +825,9 @@
     </ClInclude>
     <ClInclude Include="..\libnginx\test_common.h">
       <Filter>research</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libnginx\pool\cg_pool.h">
+      <Filter>research\pool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
