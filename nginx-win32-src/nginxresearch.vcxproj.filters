@@ -560,6 +560,9 @@
     <ClCompile Include="..\libnginx\cg_pool_test.cc">
       <Filter>research</Filter>
     </ClCompile>
+    <ClCompile Include="..\libnginx\research_ngx_cycle.cc">
+      <Filter>research</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ngx_auto_config.h">

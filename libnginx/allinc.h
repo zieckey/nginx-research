@@ -15,6 +15,7 @@ extern "C" {
     #include "ngx_array.h"
     #include "ngx_list.h"
     #include "ngx_queue.h"
+    #include "ngx_http.h"
 
     // The global memory pool used in all of the unit test cases
     // It is defined in ngx_pool.cc

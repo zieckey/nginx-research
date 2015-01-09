@@ -102,6 +102,7 @@
     <ClCompile Include="..\libnginx\cg_pool_test.cc" />
     <ClCompile Include="..\libnginx\pool\cg_pool.cc" />
     <ClCompile Include="..\libnginx\research_ngx_array.cc" />
+    <ClCompile Include="..\libnginx\research_ngx_cycle.cc" />
     <ClCompile Include="..\libnginx\research_ngx_hash.cc">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClCompile>
