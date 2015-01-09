@@ -171,7 +171,7 @@ $(NGINX_MAKEFILE) : $(NGINX_TAR)
 	cd $(NGINX_ROOT); ./configure ; (make||echo)
 
 clean :
-	rm -rf *.so *.a *.o $(TARGET)
+	rm -rf *.so *.a *.o *.d $(TARGET)
 
 distclean :
 	$(MAKE) clean
