@@ -99,6 +99,8 @@
     <ClCompile Include="..\libnginx\base64.cc">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
     </ClCompile>
+    <ClCompile Include="..\libnginx\cg_pool_test.cc" />
+    <ClCompile Include="..\libnginx\pool\cg_pool.cc" />
     <ClCompile Include="..\libnginx\research_ngx_array.cc" />
     <ClCompile Include="..\libnginx\research_ngx_hash.cc">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -273,6 +275,7 @@
   <ItemGroup>
     <ClInclude Include="..\libnginx\allinc.h" />
     <ClInclude Include="..\libnginx\dump_nginx_struct.h" />
+    <ClInclude Include="..\libnginx\pool\cg_pool.h" />
     <ClInclude Include="..\libnginx\test_common.h" />
     <ClInclude Include="ngx_auto_config.h" />
     <ClInclude Include="ngx_auto_headers.h" />
