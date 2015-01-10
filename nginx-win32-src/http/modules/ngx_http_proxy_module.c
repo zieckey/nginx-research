@@ -847,9 +847,31 @@ ngx_http_proxy_create_request(ngx_http_request_t *r)
     ngx_http_proxy_loc_conf_t    *plcf;
     ngx_http_script_len_code_pt   lcode;
 
-    u = r->upstream;
+    // Test code , add some data to the request_body
+    // this means we changed the request body
+    ngx_uint_t append_size = 5;
+    u_char* cp = NULL;
+    {
+        b = ngx_create_temp_buf(r->pool, sizeof(ngx_buf_t) + 100);
+        memcpy(b->last, ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", append_size);
+        b->last += append_size;
 
+        cl = ngx_pcalloc(r->pool, sizeof(ngx_chain_t));
+        cl->buf = b;
+        cl->next = NULL;
+
+        r->request_body->bufs->next = cl;
+        r->request_body->buf = b;
+
+        r->headers_in.content_length_n += append_size;
+        r->headers_in.content_length->value.data = ngx_pcalloc(r->pool, 16);
+        cp = ngx_snprintf(r->headers_in.content_length->value.data, 16, "%d", r->headers_in.content_length_n);
+        r->headers_in.content_length->value.len = cp - r->headers_in.content_length->value.data;
+    }
+
+    u = r->upstream;
     plcf = ngx_http_get_module_loc_conf(r, ngx_http_proxy_module);
+
 
     if (u->method.len) {
         /* HEAD was changed to GET to cache response */
@@ -958,6 +980,8 @@ ngx_http_proxy_create_request(ngx_http_request_t *r)
         }
     }
 
+    /* for the sake of Content-Length changed*/
+    len += 2;
 
     b = ngx_create_temp_buf(r->pool, len);
     if (b == NULL) {
@@ -1372,6 +1396,8 @@ ngx_http_proxy_finalize_request(ngx_http_request_t *r, ngx_int_t rc)
     ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                    "finalize http proxy request");
 
+    printf("headers_out content-length: %d\n", (int)(r->headers_out.content_length_n));
+    //printf("");
     return;
 }
 
