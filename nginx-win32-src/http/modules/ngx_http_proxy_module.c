@@ -77,6 +77,7 @@ typedef struct {
 
 
 typedef struct {
+    ngx_http_request_t        *request;
     ngx_http_status_t              status;
     ngx_http_proxy_vars_t          vars;
     size_t                         internal_body_length;
@@ -548,6 +549,60 @@ static ngx_path_init_t  ngx_http_proxy_temp_path = {
     ngx_string(NGX_HTTP_PROXY_TEMP_PATH), { 1, 2, 0 }
 };
 
+static ngx_int_t
+ngx_http_proxy_filter_init(void *data)
+{
+    //     ngx_http_proxy_ctx_t  *ctx = data;
+    // 
+    //     ngx_http_upstream_t  *u;
+    //     ctx->
+    //     u = ctx->request->upstream;
+    // 
+    //     u->length += NGX_HTTP_MEMCACHED_END;
+
+    return NGX_OK;
+}
+
+
+static ngx_int_t
+ngx_http_proxy_filter(void *data, ssize_t bytes)
+{
+    ngx_http_proxy_ctx_t  *ctx = data;
+
+    u_char               *last;
+    ngx_buf_t            *b;
+    ngx_chain_t          *cl, **ll;
+    ngx_http_upstream_t  *u;
+
+    u = ctx->request->upstream;
+    b = &u->buffer;
+
+    for (cl = u->out_bufs, ll = &u->out_bufs; cl; cl = cl->next) {
+        ll = &cl->next;
+    }
+
+    cl = ngx_chain_get_free_buf(ctx->request->pool, &u->free_bufs);
+    if (cl == NULL) {
+        return NGX_ERROR;
+    }
+
+    cl->buf->flush = 1;
+    cl->buf->memory = 1;
+
+    *ll = cl;
+
+    last = b->last;
+    cl->buf->pos = last;
+    b->last += bytes;
+    cl->buf->last = b->last;
+    cl->buf->tag = u->output.tag;
+
+    ngx_log_debug4(NGX_LOG_DEBUG_HTTP, ctx->request->connection->log, 0,
+        "memcached filter bytes:%z size:%z length:%z rest:%z",
+        bytes, b->last - b->pos, u->length, ctx->rest);
+
+    return NGX_OK;
+}
 
 static ngx_int_t
 ngx_http_proxy_handler(ngx_http_request_t *r)
@@ -565,7 +620,7 @@ ngx_http_proxy_handler(ngx_http_request_t *r)
     if (ctx == NULL) {
         return NGX_ERROR;
     }
-
+    ctx->request = r;
     ngx_http_set_ctx(r, ctx, ngx_http_proxy_module);
 
     plcf = ngx_http_get_module_loc_conf(r, ngx_http_proxy_module);
@@ -599,6 +654,11 @@ ngx_http_proxy_handler(ngx_http_request_t *r)
     u->finalize_request = ngx_http_proxy_finalize_request;
     r->state = 0;
 
+    u->input_filter_init = ngx_http_proxy_filter_init;
+    u->input_filter = ngx_http_proxy_filter;
+    u->input_filter_ctx = ctx;
+
+
     if (plcf->redirects) {
         u->rewrite_redirect = ngx_http_proxy_rewrite_redirect;
     }
@@ -622,6 +682,8 @@ ngx_http_proxy_handler(ngx_http_request_t *r)
 
     return NGX_DONE;
 }
+
+
 
 
 static ngx_int_t
