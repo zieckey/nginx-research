@@ -29,7 +29,7 @@ void dump_queue_from_head(ngx_queue_t *que)
 {
     ngx_queue_t *q = ngx_queue_head(que);
 
-    printf("(0x%x: (0x%x, 0x%x)) <==> \n", que, que->prev, que->next);
+    printf("(0x%p: (0x%p, 0x%p)) <==> \n", que, que->prev, que->next);
 
     for (; q != ngx_queue_sentinel(que); q = ngx_queue_next(q))
     {

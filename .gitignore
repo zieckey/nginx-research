@@ -12,6 +12,9 @@
 *.la
 *.a
 
+*.d
+*.bak
+
 nginx-win32-src/Backup/
 nginx-win32-src/UpgradeLog.htm
 nginx-win32-src/nginx.opensdf
@@ -54,5 +57,4 @@ nginx-1.7.9.tar.gz
 nginx-1.7.9/Makefile
 nginx-1.7.9/objs/
 libnginx/nginx-1.7.9
-
 libnginx/researchnginx

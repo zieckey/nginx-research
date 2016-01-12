@@ -13,9 +13,11 @@ CFLAGS = -pipe -g -W -Wall -Wpointer-arith \
 		 -fPIC -MMD\
 		 -I $(NGINX_OBJS_PATH) \
 		 -I $(NGINX_SRC_PATH)/core \
+		 -I $(NGINX_SRC_PATH)/http \
+		 -I $(NGINX_SRC_PATH)/http/modules \
+		 -I $(NGINX_SRC_PATH)/event \
 		 -I $(NGINX_SRC_PATH)/os \
 		 -I $(NGINX_SRC_PATH)/os/unix \
-		 -I $(NGINX_SRC_PATH)/os/event \
 
 NGINX_LDFLAGS = -lpcre -lcrypto -lcrypt -lz -lpthread
 LDFLAGS = -L . -lnginx $(NGINX_LDFLAGS) -lgtest -lgtest_main
@@ -138,7 +140,7 @@ NGINX_OBJS = \
 			 $(NGINX_ROOT)/objs/src/http/modules/ngx_http_upstream_keepalive_module.o \
 			 $(NGINX_ROOT)/objs/ngx_modules.o 
 
-SRCS := $(wildcard *.cc)
+SRCS := $(wildcard *.cc) $(wildcard pool/*.cc)
 OBJS := $(patsubst %.cc, %.o, $(SRCS))
 DEPS := $(patsubst %.o, %.d, $(OBJS))
 
@@ -186,4 +188,6 @@ distclean :
 %.o : %.cc
 	$(CXX) -c $(CFLAGS) $< -o $@
 
+pool/%.o : pool/%.cc
+	$(CXX) -c $(CFLAGS) $< -o $@
 
