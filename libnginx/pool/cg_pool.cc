@@ -119,7 +119,7 @@ cg_create_pool(size_t size)
     p->d.failed = 0;
 
     size = size - sizeof(cg_pool_t);
-    p->max = (unsigned int)(size < CG_MAX_ALLOC_FROM_POOL ? size : CG_MAX_ALLOC_FROM_POOL);
+    p->max = (unsigned int)(size < (size_t)CG_MAX_ALLOC_FROM_POOL ? size : (size_t)CG_MAX_ALLOC_FROM_POOL);
     if (p->max < sizeof(cg_pool_large_t)) {
         // Avoid infinite recursion loop calling cg_palloc_large when cg_palloc
         p->max = sizeof(cg_pool_large_t) << 3;
