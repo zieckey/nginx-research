@@ -39,6 +39,9 @@
     <Filter Include="pcre">
       <UniqueIdentifier>{315d04a3-1606-4f75-ba0f-a0a2440f9412}</UniqueIdentifier>
     </Filter>
+    <Filter Include="http\ext_modules\echo">
+      <UniqueIdentifier>{40e2d4d9-c07d-4f5a-b133-ba2b92f2f9dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ngx_modules.c">
@@ -521,6 +524,42 @@
     <ClCompile Include="..\ext-module\http_get_filter\ngx_http_get_filter_module.c">
       <Filter>http\ext_modules</Filter>
     </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_echo.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_filter.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_foreach.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_handler.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_location.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_module.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_request_info.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_sleep.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_subrequest.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_timer.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_util.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_var.c">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ngx_auto_config.h">
@@ -777,6 +816,45 @@
     </ClInclude>
     <ClInclude Include="pcre-8.12\ucp.h">
       <Filter>pcre</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ddebug.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_echo.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_filter.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_foreach.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_handler.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_location.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_module.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_request_info.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_sleep.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_subrequest.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_timer.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_util.h">
+      <Filter>http\ext_modules\echo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_var.h">
+      <Filter>http\ext_modules\echo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

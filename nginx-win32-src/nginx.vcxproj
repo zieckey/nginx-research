@@ -94,6 +94,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_echo.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_filter.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_foreach.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_handler.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_location.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_module.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_request_info.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_sleep.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_subrequest.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_timer.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_util.c" />
+    <ClCompile Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_var.c" />
     <ClCompile Include="..\ext-module\http_get_filter\ngx_http_get_filter_module.c" />
     <ClCompile Include="..\ext-module\token_filter\ngx_http_token_filter_module.c" />
     <ClCompile Include="ngx_modules.c" />
@@ -259,6 +271,19 @@
     <ClCompile Include="pcre-8.12\pcreposix.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ddebug.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_echo.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_filter.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_foreach.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_handler.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_location.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_module.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_request_info.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_sleep.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_subrequest.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_timer.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_util.h" />
+    <ClInclude Include="..\ext-module\echo-nginx-module-0.57\src\ngx_http_echo_var.h" />
     <ClInclude Include="ngx_auto_config.h" />
     <ClInclude Include="ngx_auto_headers.h" />
     <ClInclude Include="core\nginx.h" />
